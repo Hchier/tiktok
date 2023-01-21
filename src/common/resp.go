@@ -14,10 +14,15 @@ type UserInfoResp struct {
 	StatusCode int32  `json:"status_code"`
 	StatusMsg  string `json:"status_msg"`
 	User       *struct {
-		Id            int64  `json:"id"`
-		Name          string `json:"name"`
-		FollowCount   int64  `json:"follow_count"`
-		FollowerCount int64  `json:"follower_count"`
-		IsFollow      bool   `json:"is_follow"`
+		Id               int64  `json:"id"`
+		Name             string `json:"name"`
+		FollowCount      int64  `json:"follow_count"`
+		FollowerCount    int64  `json:"follower_count"`
+		IsFollow         bool   `json:"is_follow"`
+		Avatar           string `json:"avatar"`
+		Background_image string `json:"background_image"`
+		Signature        string `json:"signature"`
+		Total_favorited  int64  `json:"total_favorited"`
+		Favorite_count   int64  `json:"favorite_count"`
 	} `json:"user"`
 }

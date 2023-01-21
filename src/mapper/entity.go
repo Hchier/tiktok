@@ -11,12 +11,17 @@ type Follow struct {
 }
 
 type User struct {
-	Id             int64
-	Username       string
-	Password       string
-	Follow_count   int64
-	Follower_count int64
-	Deleted        int8
+	Id               int64
+	Username         string
+	Password         string
+	Follow_count     int64
+	Follower_count   int64
+	Avatar           string
+	Background_image string
+	Signature        string
+	Total_favorited  int64
+	Favorite_count   int64
+	Deleted          int8
 }
 
 type Video struct {
