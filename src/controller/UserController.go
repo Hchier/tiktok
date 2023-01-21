@@ -46,7 +46,7 @@ func UserLogin(ctx context.Context, c *app.RequestContext) {
 func UserInfo(ctx context.Context, c *app.RequestContext) {
 	userId := c.Query("user_id")
 	token := c.Query("token")
-	res, err := common.Rdb.HGet(ctx, "tokens", userId).Result()
+	res, err := common.Rdb.HGet(ctx, "tokens", token).Result()
 	if err != nil {
 		common.Log(common.ErrLogDest, "查找token失败：", err.Error())
 		c.JSON(http.StatusOK, &common.UserInfoResp{
@@ -55,7 +55,7 @@ func UserInfo(ctx context.Context, c *app.RequestContext) {
 		})
 		return
 	}
-	if token != res {
+	if userId != res {
 		c.JSON(http.StatusOK, &common.UserInfoResp{
 			StatusCode: -1,
 			StatusMsg:  "token不匹配",

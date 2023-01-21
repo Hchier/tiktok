@@ -15,4 +15,6 @@ func init() {
 	Hertz.POST("/douyin/user/register/", UserRegister)
 	Hertz.POST("/douyin/user/login/", UserLogin)
 	Hertz.GET("/douyin/user/", UserInfo)
+
+	Hertz.POST("/douyin/publish/action/", VideoPublish)
 }

@@ -95,7 +95,7 @@ func GetUserInfo(id int64) *common.UserInfoResp {
 func SetToken(id int64, username string) string {
 	var token string = username + common.GetRandStr()
 	ctx := context.Background()
-	_, err := common.Rdb.HSet(ctx, "tokens", id, token).Result()
+	_, err := common.Rdb.HSet(ctx, "tokens", token, id).Result()
 	if err != nil {
 		file := common.GetFile(common.ErrLogDest)
 		defer file.Close()

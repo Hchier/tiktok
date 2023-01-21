@@ -26,3 +26,8 @@ type UserInfoResp struct {
 		Favorite_count   int64  `json:"favorite_count"`
 	} `json:"user"`
 }
+
+type VideoPublishResp struct {
+	StatusCode int32  `json:"status_code"`
+	StatusMsg  string `json:"status_msg"`
+}
