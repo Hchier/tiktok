@@ -61,3 +61,35 @@ func GetJpegFrame(videoPath string, frameNum int) io.Reader {
 	}
 	return buf
 }
+
+func GetListOfPublishedVideo(userId int64) *common.ListOfPublishedVideoResp {
+	valid, videos := mapper.GetVideoListByUserId(userId)
+	if !valid {
+		return &common.ListOfPublishedVideoResp{
+			StatusCode: -1,
+			StatusMsg:  "查找视频失败",
+		}
+	}
+	var resp common.ListOfPublishedVideoResp = common.ListOfPublishedVideoResp{
+		StatusCode: 0,
+		StatusMsg:  "查找视频成功",
+	}
+	resp.VideoList = make([]common.VideoVo, 10)
+
+	for i, video := range videos {
+		resp.VideoList[i].Author.Id = 22
+		resp.VideoList[i].Author.Name = "hchier"
+		resp.VideoList[i].Author.Avatar = "http://192.168.0.105:8010/static/video/cover/1.png"
+		resp.VideoList[i].Author.FollowCount = 2
+		resp.VideoList[i].Author.FollowerCount = 22
+		resp.VideoList[i].Author.IsFollow = true
+
+		resp.VideoList[i].Id = video.Id
+		resp.VideoList[i].PlayUrl = common.StaticResources + video.Play_url
+		resp.VideoList[i].CoverUrl = common.StaticResources + video.Cover_url
+		resp.VideoList[i].FavoriteCount = video.Favorite_count
+		resp.VideoList[i].CommentCount = video.Comment_count
+		resp.VideoList[i].Title = video.Title
+	}
+	return &resp
+}

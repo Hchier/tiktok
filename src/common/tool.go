@@ -1,6 +1,7 @@
 package common
 
 import (
+	"context"
 	"encoding/hex"
 	"errors"
 	"fmt"
@@ -19,6 +20,7 @@ import (
 const ErrLogDest = "logs/err.log"
 const VideoDataDest = "static\\video\\data\\"
 const VideoCoverDest = "static\\video\\cover\\"
+const StaticResources = "http://192.168.0.105:8010/"
 
 func GetFile(dest string) *os.File {
 	f, err := os.OpenFile(dest, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
@@ -52,6 +54,7 @@ func Log(dest string, v ...interface{}) {
 	hlog.Error(v...)
 }
 
+// 雪花算法
 const (
 	workerBits  uint8 = 10                      //机器码位数
 	numberBits  uint8 = 12                      //序列号位数
@@ -110,4 +113,14 @@ func GetSnowId() string {
 	}
 	id := worker.NextId()
 	return strconv.FormatInt(id, 10)
+}
+
+// 验证身份是否有效
+func IsValidUser(token string, ctx context.Context) (bool, int64) {
+	res, _ := Rdb.HGet(ctx, "tokens", token).Result()
+	userId, err := strconv.ParseInt(res, 10, 64)
+	if err != nil {
+		return false, -1
+	}
+	return true, userId
 }

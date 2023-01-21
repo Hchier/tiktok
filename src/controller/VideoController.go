@@ -4,7 +4,6 @@ import (
 	"context"
 	"github.com/cloudwego/hertz/pkg/app"
 	"net/http"
-	"strconv"
 	"tiktok/src/common"
 	"tiktok/src/service"
 )
@@ -14,10 +13,8 @@ import (
 
 func VideoPublish(ctx context.Context, c *app.RequestContext) {
 
-	token := string(c.FormValue("token"))
-	res, _ := common.Rdb.HGet(ctx, "tokens", token).Result()
-	userId, err := strconv.ParseInt(res, 10, 64)
-	if err != nil {
+	isValid, userId := common.IsValidUser(c.Query("token"), ctx)
+	if !isValid {
 		c.JSON(http.StatusOK, &common.VideoPublishResp{
 			StatusCode: -1,
 			StatusMsg:  "身份验证失败",
@@ -25,4 +22,16 @@ func VideoPublish(ctx context.Context, c *app.RequestContext) {
 	}
 
 	c.JSON(http.StatusOK, service.PublishVideo(c, userId))
+}
+
+func ListOfPublishedVideo(ctx context.Context, c *app.RequestContext) {
+	isValid, userId := common.IsValidUser(c.Query("token"), ctx)
+	if !isValid {
+		c.JSON(http.StatusOK, &common.ListOfPublishedVideoResp{
+			StatusCode: -1,
+			StatusMsg:  "身份验证失败",
+		})
+		return
+	}
+	c.JSON(http.StatusOK, service.GetListOfPublishedVideo(userId))
 }
