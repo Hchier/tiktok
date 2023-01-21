@@ -4,47 +4,67 @@ import (
 	"context"
 	"github.com/cloudwego/hertz/pkg/app"
 	"net/http"
+	"strconv"
+	"tiktok/src/common"
 	"tiktok/src/service"
 )
 
 //@author by Hchier
 //@Date 2023/1/20 22:54
 
-type UserRegisterResp struct {
-	StatusCode int32  `json:"status_code"`
-	StatusMsg  string `json:"status_msg"`
-	UserId     int32  `json:"user_id"`
-	Token      string `json:"token"`
+func UserRegister(ctx context.Context, c *app.RequestContext) {
+	username := c.Query("username")
+	password := c.Query("password")
+	if username == "" || password == "" {
+		c.JSON(http.StatusOK, &common.UserRegisterOrLoginResp{
+			StatusCode: -1,
+			StatusMsg:  "username或password为空",
+			UserId:     -1,
+			Token:      "",
+		})
+		return
+	}
+	c.JSON(http.StatusOK, service.Register(username, password))
 }
 
-func UserRefresh() {
-	Hertz.POST("/douyin/user/register/", func(ctx context.Context, c *app.RequestContext) {
-		username := c.Query("username")
-		password := c.Query("password")
-		if username == "" || password == "" {
-			c.JSON(http.StatusOK, &UserRegisterResp{
-				StatusCode: -1,
-				StatusMsg:  "username或password为空",
-				UserId:     -1,
-				Token:      "",
-			})
-			return
-		}
-		id, statusMsg := service.Register(username, password)
-		if id >= 0 {
-			c.JSON(http.StatusOK, UserRegisterResp{
-				StatusCode: 0,
-				StatusMsg:  statusMsg,
-				UserId:     id,
-				Token:      "",
-			})
-		} else {
-			c.JSON(http.StatusOK, UserRegisterResp{
-				StatusCode: id,
-				StatusMsg:  statusMsg,
-				UserId:     id,
-				Token:      "",
-			})
-		}
-	})
+func UserLogin(ctx context.Context, c *app.RequestContext) {
+	username := c.Query("username")
+	password := c.Query("password")
+	if username == "" || password == "" {
+		c.JSON(http.StatusOK, &common.UserRegisterOrLoginResp{
+			StatusCode: -1,
+			StatusMsg:  "username或password为空",
+			UserId:     -1,
+			Token:      "err",
+		})
+		return
+	}
+	c.JSON(http.StatusOK, service.Login(username, password))
+
+}
+
+func UserInfo(ctx context.Context, c *app.RequestContext) {
+	userId := c.Query("user_id")
+	token := c.Query("token")
+	res, err := common.Rdb.HGet(ctx, "tokens", userId).Result()
+	if err != nil {
+		common.Log(common.ErrLogDest, "查找token失败：", err.Error())
+		c.JSON(http.StatusOK, &common.UserInfoResp{
+			StatusCode: -1,
+			StatusMsg:  "查找token失败",
+		})
+		return
+	}
+	if token != res {
+		c.JSON(http.StatusOK, &common.UserInfoResp{
+			StatusCode: -1,
+			StatusMsg:  "token不匹配",
+		})
+		return
+	}
+	id, err := strconv.ParseInt(userId, 10, 64)
+	if err != nil {
+		print(err.Error())
+	}
+	c.JSON(http.StatusOK, service.GetUserInfo(id))
 }

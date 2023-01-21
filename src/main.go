@@ -6,7 +6,5 @@ import "tiktok/src/controller"
 //@Date 2023/1/20 22:50
 
 func main() {
-	controller.UserRefresh()
 	controller.Hertz.Spin()
-
 }

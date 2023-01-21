@@ -3,47 +3,47 @@ package mapper
 import "time"
 
 type Follow struct {
-	Id         int32
-	Follower   int32
-	Followee   int32
+	Id         int64
+	Follower   int64
+	Followee   int64
 	CreateTime time.Time
 	Deleted    int8
 }
 
 type User struct {
-	Id            int32
-	Username      string
-	Password      string
-	FollowCount   int32
-	FollowerCount int32
-	Deleted       int8
+	Id             int64
+	Username       string
+	Password       string
+	Follow_count   int64
+	Follower_count int64
+	Deleted        int8
 }
 
 type Video struct {
-	Id            int32
-	UserId        int32
+	Id            int64
+	UserId        int64
 	PlayUrl       string `comment:"视频地址"`
 	CoverUrl      string `comment:"封面地址"`
-	FavoriteCount int32
-	CommentCount  int32
+	FavoriteCount int64
+	CommentCount  int64
 	Title         string
 	PublishDate   time.Time
 	Deleted       int8
 }
 
 type VideoComment struct {
-	Id         int32
-	UserId     int32
-	VideoId    int32
+	Id         int64
+	UserId     int64
+	VideoId    int64
 	content    string
 	CreateDate time.Time
 	Deleted    int8
-	CommentOf  int32
+	CommentOf  int64
 }
 
 type VideoFavor struct {
-	UserId     int32
-	VideoId    int32
+	UserId     int64
+	VideoId    int64
 	UpdateTime time.Time
 	Deleted    int8
 }
