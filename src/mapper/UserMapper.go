@@ -47,7 +47,7 @@ func SelectUserById(id int64) User {
 	var user User
 	err := Db.Get(&user, "select * from user where id = ?", id)
 	if err != nil {
-		common.Log(common.ErrLogDest, "查找用户信息失败：", err.Error())
+		common.ErrLog("查找用户信息失败：", err.Error())
 	}
 	return user
 }

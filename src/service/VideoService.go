@@ -24,7 +24,7 @@ func PublishVideo(c *app.RequestContext, userId int64) *common.VideoPublishResp 
 
 	err := c.SaveUploadedFile(video_data, video_path)
 	if err != nil {
-		common.Log(common.ErrLogDest, "视频落盘出错：", err.Error())
+		common.ErrLog("视频落盘出错：", err.Error())
 		return &common.VideoPublishResp{
 			StatusCode: -1,
 			StatusMsg:  "视频落盘出错",
@@ -57,13 +57,35 @@ func GetJpegFrame(videoPath string, frameNum int) io.Reader {
 		WithOutput(buf, os.Stdout).
 		Run()
 	if err != nil {
-		common.Log("截图失败：", err.Error())
+		common.ErrLog("截图失败：", err.Error())
 	}
 	return buf
 }
 
+func TransferVideoEntityToVideoVo(videos []mapper.Video, userId int64) []common.VideoVo {
+	var videoVos []common.VideoVo = make([]common.VideoVo, len(videos))
+	for i, video := range videos {
+		videoVos[i].Author.Id = 22
+		videoVos[i].Author.Name = "hchier"
+		videoVos[i].Author.Avatar = "http://192.168.0.105:8010/static/video/cover/1.png"
+		videoVos[i].Author.Signature = "000000000000000"
+		videoVos[i].Author.FollowCount = 2
+		videoVos[i].Author.FollowerCount = 22
+		videoVos[i].Author.IsFollow = true
+
+		videoVos[i].Id = video.Id
+		videoVos[i].PlayUrl = common.StaticResources + video.Play_url
+		videoVos[i].CoverUrl = common.StaticResources + video.Cover_url
+		videoVos[i].FavoriteCount = video.Favorite_count
+		videoVos[i].CommentCount = video.Comment_count
+		videoVos[i].IsFavorite = mapper.CheckVideoFavorByUserIdAndVideoId(userId, video.Id)
+		videoVos[i].Title = video.Title
+	}
+	return videoVos
+}
+
 func GetListOfPublishedVideo(userId int64) *common.ListOfPublishedVideoResp {
-	valid, videos := mapper.GetVideoListByUserId(userId)
+	valid, videos := mapper.GetPublishedVideoListByUserId(userId)
 	if !valid {
 		return &common.ListOfPublishedVideoResp{
 			StatusCode: -1,
@@ -74,22 +96,11 @@ func GetListOfPublishedVideo(userId int64) *common.ListOfPublishedVideoResp {
 		StatusCode: 0,
 		StatusMsg:  "查找视频成功",
 	}
-	resp.VideoList = make([]common.VideoVo, 10)
+	resp.VideoList = TransferVideoEntityToVideoVo(videos, userId)
 
-	for i, video := range videos {
-		resp.VideoList[i].Author.Id = 22
-		resp.VideoList[i].Author.Name = "hchier"
-		resp.VideoList[i].Author.Avatar = "http://192.168.0.105:8010/static/video/cover/1.png"
-		resp.VideoList[i].Author.FollowCount = 2
-		resp.VideoList[i].Author.FollowerCount = 22
-		resp.VideoList[i].Author.IsFollow = true
-
-		resp.VideoList[i].Id = video.Id
-		resp.VideoList[i].PlayUrl = common.StaticResources + video.Play_url
-		resp.VideoList[i].CoverUrl = common.StaticResources + video.Cover_url
-		resp.VideoList[i].FavoriteCount = video.Favorite_count
-		resp.VideoList[i].CommentCount = video.Comment_count
-		resp.VideoList[i].Title = video.Title
-	}
 	return &resp
+}
+
+func GetAuthorIdByVideoId(videoId int64) int64 {
+	return mapper.SelectAuthorIdByVideoId(videoId)
 }

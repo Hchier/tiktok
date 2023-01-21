@@ -54,6 +54,10 @@ func Log(dest string, v ...interface{}) {
 	hlog.Error(v...)
 }
 
+func ErrLog(v ...interface{}) {
+	Log(ErrLogDest, v)
+}
+
 // 雪花算法
 const (
 	workerBits  uint8 = 10                      //机器码位数

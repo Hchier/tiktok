@@ -15,11 +15,11 @@ func init() {
 	Hertz.POST("/douyin/user/register/", UserRegister)
 	Hertz.POST("/douyin/user/login/", UserLogin)
 	Hertz.GET("/douyin/user/", UserInfo)
-
 	Hertz.POST("/douyin/publish/action/", VideoPublish)
 	Hertz.GET("/douyin/publish/list/", ListOfPublishedVideo)
+	Hertz.GET("/douyin/feed/", ListOfPublishedVideo)
 
+	Hertz.POST("/douyin/favorite/action/", VideoFavor)
 	Hertz.GET("/douyin/favorite/list/", ListOfPublishedVideo)
 
-	Hertz.GET("/douyin/feed/", ListOfPublishedVideo)
 }

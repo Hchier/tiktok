@@ -48,7 +48,7 @@ func UserInfo(ctx context.Context, c *app.RequestContext) {
 	token := c.Query("token")
 	res, err := common.Rdb.HGet(ctx, "tokens", token).Result()
 	if err != nil {
-		common.Log(common.ErrLogDest, "查找token失败：", err.Error())
+		common.ErrLog("查找token失败：", err.Error())
 		c.JSON(http.StatusOK, &common.UserInfoResp{
 			StatusCode: -1,
 			StatusMsg:  "查找token失败",
