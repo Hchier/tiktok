@@ -19,7 +19,7 @@ func InsertFollow(follower, followee int64) {
 // ExistFollow 判断是否存在关注记录
 func ExistFollow(follower, followee int64) bool {
 	var count int32
-	err := Db.Get(&count, "select count(*) from follow where follower = ? and followee = ? and deleted = 0")
+	err := Db.Get(&count, "select count(*) from follow where follower = ? and followee = ? and deleted = 0", follower, followee)
 	if err != nil {
 		common.ErrLog("判断是否存在关注记录失败：", err.Error())
 		return false

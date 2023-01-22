@@ -90,6 +90,7 @@ func TransferVideoEntityToVideoVo(videos []mapper.Video, userId int64) []common.
 	return videoVos
 }
 
+// GetListOfPublishedVideo 拿到用户发布的视频列表
 func GetListOfPublishedVideo(userId int64) *common.ListOfPublishedVideoResp {
 	valid, videos := mapper.GetPublishedVideoListByUserId(userId)
 	if !valid {
@@ -109,4 +110,22 @@ func GetListOfPublishedVideo(userId int64) *common.ListOfPublishedVideoResp {
 
 func GetAuthorIdByVideoId(videoId int64) int64 {
 	return mapper.SelectAuthorIdByVideoId(videoId)
+}
+
+// GetListOfFavoredVideo 拿到用户点赞的视频列表
+func GetListOfFavoredVideo(userId int64) *common.ListOfPublishedVideoResp {
+	valid, videos := mapper.GetFavoredVideoListByUserId(userId)
+	if !valid {
+		return &common.ListOfPublishedVideoResp{
+			StatusCode: -1,
+			StatusMsg:  "查找视频失败",
+		}
+	}
+	var resp common.ListOfPublishedVideoResp = common.ListOfPublishedVideoResp{
+		StatusCode: 0,
+		StatusMsg:  "查找视频成功",
+	}
+	resp.VideoList = TransferVideoEntityToVideoVo(videos, userId)
+
+	return &resp
 }

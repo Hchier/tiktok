@@ -20,6 +20,6 @@ func init() {
 	Hertz.GET("/douyin/feed/", ListOfPublishedVideo)
 
 	Hertz.POST("/douyin/favorite/action/", VideoFavor)
-	Hertz.GET("/douyin/favorite/list/", ListOfPublishedVideo)
+	Hertz.GET("/douyin/favorite/list/", ListOfFavoredVideo)
 
 }

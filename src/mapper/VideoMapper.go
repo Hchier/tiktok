@@ -47,7 +47,7 @@ func SelectAuthorIdByVideoId(videoId int64) int64 {
 // GetFavoredVideoListByUserId 查询用户点赞的视频列表
 func GetFavoredVideoListByUserId(userId int64) (bool, []Video) {
 	var videos []Video
-	err := Db.Select(&videos, "select * from video where id in (select video_id where user_id = ? and deleted = 0)", userId)
+	err := Db.Select(&videos, "select * from video where id in (select video_id from video_favor where user_id = ? and deleted = 0)", userId)
 	if err != nil {
 		common.ErrLog("查询用户点赞的视频列表失败", err.Error())
 		return false, videos
