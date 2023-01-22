@@ -33,3 +33,16 @@ func FollowOperation(ctx context.Context, c *app.RequestContext) {
 		c.JSON(http.StatusOK, service.DoUnFollow(userId, followee))
 	}
 }
+
+func FolloweeList(ctx context.Context, c *app.RequestContext) {
+	isValid, userId := common.IsValidUser(string(c.FormValue("token")), ctx)
+	if !isValid {
+		c.JSON(http.StatusOK, &common.VideoPublishResp{
+			StatusCode: -1,
+			StatusMsg:  "身份验证失败",
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, service.GetFolloweeInfo(userId))
+}

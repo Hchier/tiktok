@@ -97,3 +97,16 @@ type FollowActionResp struct {
 	StatusCode int32  `json:"status_code"`
 	StatusMsg  string `json:"status_msg"`
 }
+
+type UserInFollowVo struct {
+	Id       int64  `json:"id"`
+	Name     string `json:"name"`
+	Avatar   string `json:"avatar"`
+	IsFollow bool   `json:"is_follow"`
+}
+
+type FollowListResp struct {
+	StatusCode int32            `json:"status_code"`
+	StatusMsg  string           `json:"status_msg"`
+	UserList   []UserInFollowVo `json:"user_list"`
+}

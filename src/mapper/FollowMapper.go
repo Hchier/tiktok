@@ -59,3 +59,15 @@ func ExistFollow(follower, followee int64) bool {
 	}
 	return count > 0
 }
+
+// GetFolloweeIdsByFollowerId 得到用户的偶像们的id
+// 成功返回true
+func GetFolloweeIdsByFollowerId(followerId int64) (bool, []int64) {
+	var ids []int64
+	err := Db.Select(&ids, "select followee from follow where follower = ? and deleted = 0", followerId)
+	if err != nil {
+		common.ErrLog("GetFolloweeListByFollowerId时出错：", ids)
+		return false, nil
+	}
+	return true, ids
+}
