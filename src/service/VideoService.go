@@ -62,23 +62,29 @@ func GetJpegFrame(videoPath string, frameNum int) io.Reader {
 	return buf
 }
 
+// TransferVideoEntityToVideoVo 将实体Video列表转为VideoVo列表
 func TransferVideoEntityToVideoVo(videos []mapper.Video, userId int64) []common.VideoVo {
 	var videoVos []common.VideoVo = make([]common.VideoVo, len(videos))
 	for i, video := range videos {
-		videoVos[i].Author.Id = 22
-		videoVos[i].Author.Name = "hchier"
-		videoVos[i].Author.Avatar = "http://192.168.0.105:8010/static/video/cover/1.png"
-		videoVos[i].Author.Signature = "000000000000000"
-		videoVos[i].Author.FollowCount = 2
-		videoVos[i].Author.FollowerCount = 22
-		videoVos[i].Author.IsFollow = true
+		var user mapper.User = mapper.SelectUserById(video.User_id)
+		videoVos[i].Author.Id = user.Id
+		videoVos[i].Author.Name = user.Username
+		videoVos[i].Author.FollowCount = user.Follow_count
+		videoVos[i].Author.FollowerCount = user.Follower_count
+		videoVos[i].Author.Avatar = common.StaticResources + user.Avatar
+		videoVos[i].Author.BackgroundImage = common.StaticResources + user.Background_image
+		videoVos[i].Author.Signature = user.Signature
+		videoVos[i].Author.TotalFavorited = user.Total_favorited
+		videoVos[i].Author.FavoriteCount = user.Favorite_count
+		videoVos[i].Author.VideoCount = user.Video_count
+		videoVos[i].Author.IsFollow = mapper.ExistFollow(userId, video.User_id)
 
 		videoVos[i].Id = video.Id
 		videoVos[i].PlayUrl = common.StaticResources + video.Play_url
 		videoVos[i].CoverUrl = common.StaticResources + video.Cover_url
 		videoVos[i].FavoriteCount = video.Favorite_count
 		videoVos[i].CommentCount = video.Comment_count
-		videoVos[i].IsFavorite = mapper.CheckVideoFavorByUserIdAndVideoId(userId, video.Id)
+		videoVos[i].IsFavorite = mapper.ExistVideoFavor(userId, video.Id)
 		videoVos[i].Title = video.Title
 	}
 	return videoVos
