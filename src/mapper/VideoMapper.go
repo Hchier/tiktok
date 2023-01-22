@@ -76,3 +76,24 @@ func UpdateVideoFavorCount(opType int8, videoId int64, tx *sqlx.Tx) bool {
 	}
 	return true
 }
+
+// UpdateVideoCommentCount 更新视频评论数。opType -> 1：加1；2：减1
+func UpdateVideoCommentCount(opType int8, videoId int64, tx *sqlx.Tx) bool {
+	var res sql.Result
+	var err error
+	if opType == 1 {
+		res, err = tx.Exec("update video set comment_count = comment_count + 1 where id = ?", videoId)
+	} else {
+		res, err = tx.Exec("update video set comment_count = comment_count - 1 where id = ?", videoId)
+	}
+	if err != nil {
+		common.ErrLog("更新视频评论数失败：", err.Error())
+		return false
+	}
+	count, _ := res.RowsAffected()
+	if count == 0 {
+		common.ErrLog("更新视频评论数时RowsAffected为0", err.Error())
+		return false
+	}
+	return true
+}

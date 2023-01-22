@@ -67,27 +67,29 @@ func GetUserInfo(id int64) *common.UserInfoResp {
 		StatusCode: 0,
 		StatusMsg:  "ok",
 		User: &struct {
-			Id               int64  `json:"id"`
-			Name             string `json:"name"`
-			FollowCount      int64  `json:"follow_count"`
-			FollowerCount    int64  `json:"follower_count"`
-			IsFollow         bool   `json:"is_follow"`
-			Avatar           string `json:"avatar"`
-			Background_image string `json:"background_image"`
-			Signature        string `json:"signature"`
-			Total_favorited  int64  `json:"total_favorited"`
-			Favorite_count   int64  `json:"favorite_count"`
+			Id              int64  `json:"id"`
+			Name            string `json:"name"`
+			FollowCount     int64  `json:"follow_count"`
+			FollowerCount   int64  `json:"follower_count"`
+			IsFollow        bool   `json:"is_follow"`
+			Avatar          string `json:"avatar"`
+			BackgroundImage string `json:"background_image"`
+			Signature       string `json:"signature"`
+			TotalFavorited  int64  `json:"total_favorited"`
+			FavoriteCount   int64  `json:"favorite_count"`
+			VideoCount      int64  `json:"video_count"`
 		}{
-			Id:               id,
-			Name:             userEntity.Username,
-			FollowCount:      userEntity.Follow_count,
-			FollowerCount:    userEntity.Follower_count,
-			IsFollow:         true,
-			Avatar:           common.StaticResources + userEntity.Avatar,
-			Background_image: common.StaticResources + userEntity.Background_image,
-			Signature:        userEntity.Signature,
-			Total_favorited:  userEntity.Total_favorited,
-			Favorite_count:   userEntity.Favorite_count,
+			Id:              id,
+			Name:            userEntity.Username,
+			FollowCount:     userEntity.Follow_count,
+			FollowerCount:   userEntity.Follower_count,
+			IsFollow:        true,
+			Avatar:          common.StaticResources + userEntity.Avatar,
+			BackgroundImage: common.StaticResources + userEntity.Background_image,
+			Signature:       userEntity.Signature,
+			TotalFavorited:  userEntity.Total_favorited,
+			FavoriteCount:   userEntity.Favorite_count,
+			VideoCount:      userEntity.Video_count,
 		},
 	}
 }

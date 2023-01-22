@@ -14,16 +14,17 @@ type UserInfoResp struct {
 	StatusCode int32  `json:"status_code"`
 	StatusMsg  string `json:"status_msg"`
 	User       *struct {
-		Id               int64  `json:"id"`
-		Name             string `json:"name"`
-		FollowCount      int64  `json:"follow_count"`
-		FollowerCount    int64  `json:"follower_count"`
-		IsFollow         bool   `json:"is_follow"`
-		Avatar           string `json:"avatar"`
-		Background_image string `json:"background_image"`
-		Signature        string `json:"signature"`
-		Total_favorited  int64  `json:"total_favorited"`
-		Favorite_count   int64  `json:"favorite_count"`
+		Id              int64  `json:"id"`
+		Name            string `json:"name"`
+		FollowCount     int64  `json:"follow_count"`
+		FollowerCount   int64  `json:"follower_count"`
+		IsFollow        bool   `json:"is_follow"`
+		Avatar          string `json:"avatar"`
+		BackgroundImage string `json:"background_image"`
+		Signature       string `json:"signature"`
+		TotalFavorited  int64  `json:"total_favorited"`
+		FavoriteCount   int64  `json:"favorite_count"`
+		VideoCount      int64  `json:"video_count"`
 	} `json:"user"`
 }
 
@@ -64,4 +65,30 @@ type ListOfPublishedVideoResp struct {
 type VideoFavorResp struct {
 	StatusCode int32  `json:"status_code"`
 	StatusMsg  string `json:"status_msg"`
+}
+
+type CommentVo struct {
+	Id   int64 `json:"id"`
+	User struct {
+		Id            int64  `json:"id"`
+		Name          string `json:"name"`
+		Avatar        string `json:"avatar"`
+		FollowCount   int64  `json:"follow_count"`
+		FollowerCount int64  `json:"follower_count"`
+		IsFollow      bool   `json:"is_follow"`
+	} `json:"user"`
+	Content    string `json:"content"`
+	CreateDate string `json:"create_date"`
+}
+
+type CommentActionResp struct {
+	StatusCode int32     `json:"status_code"`
+	StatusMsg  string    `json:"status_msg"`
+	Comment    CommentVo `json:"comment"`
+}
+
+type VideoCommentListResp struct {
+	StatusCode  int32       `json:"status_code"`
+	StatusMsg   string      `json:"status_msg"`
+	CommentList []CommentVo `json:"comment_list"`
 }

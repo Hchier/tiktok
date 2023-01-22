@@ -41,7 +41,7 @@ type VideoComment struct {
 	Id          int64
 	User_id     int64
 	Video_id    int64
-	content     string
+	Content     string
 	Create_date time.Time
 	Deleted     int8
 	Comment_of  int64

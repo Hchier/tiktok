@@ -42,9 +42,10 @@ func VideoFavor(ctx context.Context, c *app.RequestContext) {
 		return
 	}
 	action_type := c.Query("action_type")
+	//点赞
 	if action_type == "1" {
 		c.JSON(http.StatusOK, service.DoFavorVideo(userId, video_id, authorId))
-	} else {
+	} else { //取消点赞
 		c.JSON(http.StatusOK, service.DoUnFavorVideo(userId, video_id, authorId))
 	}
 }
