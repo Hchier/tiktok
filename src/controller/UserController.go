@@ -3,6 +3,7 @@ package controller
 import (
 	"context"
 	"github.com/cloudwego/hertz/pkg/app"
+	"math/rand"
 	"net/http"
 	"strconv"
 	"tiktok/src/common"
@@ -24,7 +25,10 @@ func UserRegister(ctx context.Context, c *app.RequestContext) {
 		})
 		return
 	}
-	c.JSON(http.StatusOK, service.Register(username, password))
+	avatar := "static/avatar/" + strconv.Itoa(rand.Intn(10)) + ".png"
+	backgroundImage := "static/bg/" + strconv.Itoa(rand.Intn(10)) + ".png"
+	signature := common.Signatures[rune(rand.Intn(10))]
+	c.JSON(http.StatusOK, service.Register(username, password, avatar, backgroundImage, signature))
 }
 
 func UserLogin(ctx context.Context, c *app.RequestContext) {
@@ -46,7 +50,7 @@ func UserLogin(ctx context.Context, c *app.RequestContext) {
 func UserInfo(ctx context.Context, c *app.RequestContext) {
 	userId := c.Query("user_id")
 	token := c.Query("token")
-	res, err := common.Rdb.HGet(ctx, "tokens", token).Result()
+	currentUserId, err := common.Rdb.HGet(ctx, "tokens", token).Result()
 	if err != nil {
 		common.ErrLog("查找token失败：", err.Error())
 		c.JSON(http.StatusOK, &common.UserInfoResp{
@@ -55,7 +59,7 @@ func UserInfo(ctx context.Context, c *app.RequestContext) {
 		})
 		return
 	}
-	if userId != res {
+	if userId != currentUserId {
 		c.JSON(http.StatusOK, &common.UserInfoResp{
 			StatusCode: -1,
 			StatusMsg:  "token不匹配",

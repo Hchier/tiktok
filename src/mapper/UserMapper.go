@@ -14,8 +14,9 @@ import (
 // InsertUser
 // 成功插入则返回用户id
 // 失败则返回-1
-func InsertUser(username, password string) (int64, string) {
-	res, err := Db.Exec("insert into user (username, password) VALUES (?, ?)", username, password)
+func InsertUser(username, password, avatar, backgroundImage, signature string) (int64, string) {
+	res, err := Db.Exec("insert into user (username, password, avatar, background_image, signature) VALUES (?, ?, ?, ?, ?)",
+		username, password, avatar, backgroundImage, signature)
 	if err != nil {
 		file := common.GetFile(common.ErrLogDest)
 		defer file.Close()

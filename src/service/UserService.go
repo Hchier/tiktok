@@ -12,7 +12,7 @@ import (
 
 // Register
 // 用户注册。首先检查用户名是否被占用。
-func Register(username, password string) *common.UserRegisterOrLoginResp {
+func Register(username, password, avatar, backgroundImage, signature string) *common.UserRegisterOrLoginResp {
 	if mapper.ExistUser(username) {
 		return &common.UserRegisterOrLoginResp{
 			StatusCode: -1,
@@ -22,7 +22,7 @@ func Register(username, password string) *common.UserRegisterOrLoginResp {
 		}
 	}
 
-	id, statusMsg := mapper.InsertUser(username, password)
+	id, statusMsg := mapper.InsertUser(username, password, avatar, backgroundImage, signature)
 	if id < 0 {
 		return &common.UserRegisterOrLoginResp{
 			StatusCode: -1,
