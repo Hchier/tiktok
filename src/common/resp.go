@@ -92,3 +92,8 @@ type VideoCommentListResp struct {
 	StatusMsg   string      `json:"status_msg"`
 	CommentList []CommentVo `json:"comment_list"`
 }
+
+type FollowActionResp struct {
+	StatusCode int32  `json:"status_code"`
+	StatusMsg  string `json:"status_msg"`
+}

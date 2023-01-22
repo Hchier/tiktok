@@ -97,3 +97,47 @@ func UpdateUserFavoriteCount(opType int8, userId int64, tx *sqlx.Tx) bool {
 	}
 	return true
 }
+
+// UpdateUserFollowerCount 更新用户粉丝数。opType -> 1：加1；2：减1
+// 成功返回true
+func UpdateUserFollowerCount(opType int8, userId int64, tx *sqlx.Tx) bool {
+	var res sql.Result
+	var err error
+	if opType == 1 {
+		res, err = tx.Exec("update user set follower_count = follower_count + 1 where id = ?", userId)
+	} else {
+		res, err = tx.Exec("update user set follower_count = follower_count - 1 where id = ?", userId)
+	}
+	if err != nil {
+		common.ErrLog("更新用户粉丝数失败", err.Error())
+		return false
+	}
+	count, _ := res.RowsAffected()
+	if count == 0 {
+		common.ErrLog("更新用户粉丝数时RowsAffected为0", err.Error())
+		return false
+	}
+	return true
+}
+
+// UpdateUserFollowCount 更新用户偶像数。opType -> 1：加1；2：减1
+// 成功返回true
+func UpdateUserFollowCount(opType int8, userId int64, tx *sqlx.Tx) bool {
+	var res sql.Result
+	var err error
+	if opType == 1 {
+		res, err = tx.Exec("update user set follow_count = follow_count + 1 where id = ?", userId)
+	} else {
+		res, err = tx.Exec("update user set follow_count = follow_count - 1 where id = ?", userId)
+	}
+	if err != nil {
+		common.ErrLog("更新用户粉丝数失败", err.Error())
+		return false
+	}
+	count, _ := res.RowsAffected()
+	if count == 0 {
+		common.ErrLog("更新用户粉丝数时RowsAffected为0", err.Error())
+		return false
+	}
+	return true
+}

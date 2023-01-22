@@ -30,7 +30,7 @@ func OperateVideoComment(opType int8, videoId int64, content string, userId int6
 		commentId, _ := res.LastInsertId()
 		return true, commentId
 	} else {
-		res, err = tx.Exec("update video_comment set deleted = 1 where id = ? and user_id = ?", commentId, userId)
+		res, err = tx.Exec("update video_comment set deleted = 1 where id = ? and user_id = ? and deleted = 0", commentId, userId)
 		if err != nil {
 			common.ErrLog("删除视频评论失败：", err.Error())
 			return false, -1

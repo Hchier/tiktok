@@ -97,3 +97,13 @@ func UpdateVideoCommentCount(opType int8, videoId int64, tx *sqlx.Tx) bool {
 	}
 	return true
 }
+
+func GetVideoList() (bool, []Video) {
+	var videos []Video
+	err := Db.Select(&videos, "select * from video order by publish_date desc limit 0, 30")
+	if err != nil {
+		common.ErrLog("视频流失败：", err.Error())
+		return false, videos
+	}
+	return true, videos
+}
