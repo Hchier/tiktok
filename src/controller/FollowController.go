@@ -22,9 +22,9 @@ func FollowOperation(ctx context.Context, c *app.RequestContext) {
 		return
 	}
 	actionType := c.Query("action_type")
-	followee, err := strconv.ParseInt(c.Query("to_unser_id"), 10, 64)
+	followee, err := strconv.ParseInt(c.Query("to_user_id"), 10, 64)
 	if err != nil {
-		common.ErrLog("str to int fail：", err.Error())
+		common.ErrLog("str to int fail(FollowOperation c.Query(\"to_user_id\"))：", err.Error())
 		c.JSON(http.StatusOK, &common.FollowActionResp{StatusCode: -1, StatusMsg: "fail"})
 	}
 	if actionType == "1" {
