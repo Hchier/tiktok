@@ -26,4 +26,6 @@ func init() {
 
 	Hertz.POST("/douyin/relation/action/", FollowOperation)
 	Hertz.GET("/douyin/relation/follow/list/", FolloweeList)
+	Hertz.GET("/douyin/relation/follower/list/", FollowerList)
+	Hertz.GET("/douyin/relation/friend/list/", FollowerList)
 }

@@ -71,3 +71,15 @@ func GetFolloweeIdsByFollowerId(followerId int64) (bool, []int64) {
 	}
 	return true, ids
 }
+
+// GetFollowerIdsByFollowee 得到用户的粉丝们的id
+// 成功返回true
+func GetFollowerIdsByFolloweeId(followerId int64) (bool, []int64) {
+	var ids []int64
+	err := Db.Select(&ids, "select follower from follow where followee = ? and deleted = 0", followerId)
+	if err != nil {
+		common.ErrLog("GetFollowerIdsByFollowee时出错：", ids)
+		return false, nil
+	}
+	return true, ids
+}

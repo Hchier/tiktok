@@ -105,6 +105,7 @@ type UserInFollowVo struct {
 	IsFollow bool   `json:"is_follow"`
 }
 
+// FollowListResp 偶像列表粉丝列表公用该结构体
 type FollowListResp struct {
 	StatusCode int32            `json:"status_code"`
 	StatusMsg  string           `json:"status_msg"`

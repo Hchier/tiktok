@@ -102,6 +102,7 @@ func DoUnFollow(follower, followee int64) *common.FollowActionResp {
 	return &common.FollowActionResp{StatusCode: -0, StatusMsg: "取关成功"}
 }
 
+// GetFolloweeInfo 偶像列表
 func GetFolloweeInfo(followerId int64) *common.FollowListResp {
 	success, ids := mapper.GetFolloweeIdsByFollowerId(followerId)
 	if !success {
@@ -115,6 +116,24 @@ func GetFolloweeInfo(followerId int64) *common.FollowListResp {
 		resp.UserList[i].Name = user.Username
 		resp.UserList[i].Avatar = common.StaticResources + user.Avatar
 		resp.UserList[i].IsFollow = true
+	}
+	return resp
+}
+
+// GetFollowerInfo 粉丝列表
+func GetFollowerInfo(followeeId int64) *common.FollowListResp {
+	success, ids := mapper.GetFollowerIdsByFolloweeId(followeeId)
+	if !success {
+		return &common.FollowListResp{StatusCode: -1, StatusMsg: "获取信息失败"}
+	}
+	var resp = &common.FollowListResp{StatusCode: 0, StatusMsg: "成功"}
+	resp.UserList = make([]common.UserInFollowVo, len(ids))
+	for i, id := range ids {
+		user := mapper.SelectUserById(id)
+		resp.UserList[i].Id = id
+		resp.UserList[i].Name = user.Username
+		resp.UserList[i].Avatar = common.StaticResources + user.Avatar
+		resp.UserList[i].IsFollow = mapper.ExistFollow(followeeId, id)
 	}
 	return resp
 }
