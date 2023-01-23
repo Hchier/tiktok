@@ -59,7 +59,7 @@ func PublishVideo(c *app.RequestContext, userId int64) *common.VideoPublishResp 
 }
 
 // TransferVideoEntityToVideoVo 将实体Video列表转为VideoVo列表
-func TransferVideoEntityToVideoVo(videos []mapper.Video, userId int64) []common.VideoVo {
+func TransferVideoEntityToVideoVo(videos []mapper.Video, currentUserId int64) []common.VideoVo {
 	var videoVos []common.VideoVo = make([]common.VideoVo, len(videos))
 	for i, video := range videos {
 		var user mapper.User = mapper.SelectUserById(video.User_id)
@@ -73,22 +73,22 @@ func TransferVideoEntityToVideoVo(videos []mapper.Video, userId int64) []common.
 		videoVos[i].Author.TotalFavorited = user.Total_favorited
 		videoVos[i].Author.FavoriteCount = user.Favorite_count
 		videoVos[i].Author.VideoCount = user.Video_count
-		videoVos[i].Author.IsFollow = mapper.ExistFollow(userId, video.User_id)
+		videoVos[i].Author.IsFollow = mapper.ExistFollow(currentUserId, videoVos[i].Author.Id)
 
 		videoVos[i].Id = video.Id
 		videoVos[i].PlayUrl = common.StaticResources + video.Play_url
 		videoVos[i].CoverUrl = common.StaticResources + video.Cover_url
 		videoVos[i].FavoriteCount = video.Favorite_count
 		videoVos[i].CommentCount = video.Comment_count
-		videoVos[i].IsFavorite = mapper.ExistVideoFavor(userId, video.Id)
+		videoVos[i].IsFavorite = mapper.ExistVideoFavor(currentUserId, video.Id)
 		videoVos[i].Title = video.Title
 	}
 	return videoVos
 }
 
 // GetListOfPublishedVideo 拿到用户发布的视频列表
-func GetListOfPublishedVideo(userId int64) *common.ListOfPublishedVideoResp {
-	valid, videos := mapper.GetPublishedVideoListByUserId(userId)
+func GetListOfPublishedVideo(currentUserId, targetUserId int64) *common.ListOfPublishedVideoResp {
+	valid, videos := mapper.GetPublishedVideoListByUserId(targetUserId)
 	if !valid {
 		return &common.ListOfPublishedVideoResp{
 			StatusCode: -1,
@@ -99,7 +99,7 @@ func GetListOfPublishedVideo(userId int64) *common.ListOfPublishedVideoResp {
 		StatusCode: 0,
 		StatusMsg:  "查找视频成功",
 	}
-	resp.VideoList = TransferVideoEntityToVideoVo(videos, userId)
+	resp.VideoList = TransferVideoEntityToVideoVo(videos, currentUserId)
 
 	return &resp
 }
@@ -109,8 +109,8 @@ func GetAuthorIdByVideoId(videoId int64) int64 {
 }
 
 // GetListOfFavoredVideo 拿到用户点赞的视频列表
-func GetListOfFavoredVideo(userId int64) *common.ListOfPublishedVideoResp {
-	valid, videos := mapper.GetFavoredVideoListByUserId(userId)
+func GetListOfFavoredVideo(currentUserId, targetUserId int64) *common.ListOfPublishedVideoResp {
+	valid, videos := mapper.GetFavoredVideoListByUserId(targetUserId)
 	if !valid {
 		return &common.ListOfPublishedVideoResp{
 			StatusCode: -1,
@@ -121,7 +121,7 @@ func GetListOfFavoredVideo(userId int64) *common.ListOfPublishedVideoResp {
 		StatusCode: 0,
 		StatusMsg:  "查找视频成功",
 	}
-	resp.VideoList = TransferVideoEntityToVideoVo(videos, userId)
+	resp.VideoList = TransferVideoEntityToVideoVo(videos, currentUserId)
 
 	return &resp
 }

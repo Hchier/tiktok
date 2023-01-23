@@ -6,6 +6,7 @@ import (
 	"encoding/hex"
 	"errors"
 	"fmt"
+	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/cloudwego/hertz/pkg/common/hlog"
 	"github.com/disintegration/imaging"
 	"github.com/go-redis/redis/v8"
@@ -135,14 +136,18 @@ func GetSnowId() string {
 	return strconv.FormatInt(id, 10)
 }
 
-// 验证身份是否有效
-func IsValidUser(token string, ctx context.Context) (bool, int64) {
-	res, _ := Rdb.HGet(ctx, "tokens", token).Result()
+// IsValidUser 验证身份是否有效
+// 已登录：返回当前登录的用户的id
+// 未登录：返回-1
+func IsValidUser(ctx context.Context, c *app.RequestContext) {
+	res, _ := Rdb.HGet(ctx, "tokens", string(c.FormValue("token"))).Result()
 	userId, err := strconv.ParseInt(res, 10, 64)
+	// 未登录
 	if err != nil {
-		return false, -1
+		c.Set("id", int64(-1))
+		return
 	}
-	return true, userId
+	c.Set("id", userId)
 }
 
 // CaptureVideoFrameAsPic 截取视频帧作为图片保存

@@ -3,6 +3,11 @@ package common
 //@author by Hchier
 //@Date 2023/1/21 0:29
 
+type BasicResp struct {
+	StatusCode int32  `json:"status_code"`
+	StatusMsg  string `json:"status_msg"`
+}
+
 type UserRegisterOrLoginResp struct {
 	StatusCode int32  `json:"status_code"`
 	StatusMsg  string `json:"status_msg"`

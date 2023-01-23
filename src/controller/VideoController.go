@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/cloudwego/hertz/pkg/app"
 	"net/http"
+	"strconv"
 	"tiktok/src/common"
 	"tiktok/src/service"
 )
@@ -13,53 +14,37 @@ import (
 
 // VideoPublish 发布视频
 func VideoPublish(ctx context.Context, c *app.RequestContext) {
-
-	isValid, userId := common.IsValidUser(string(c.FormValue("token")), ctx)
-	if !isValid {
-		c.JSON(http.StatusOK, &common.VideoPublishResp{
+	val, _ := c.Get("id")
+	if currentUserId := val.(int64); currentUserId == -1 {
+		c.JSON(http.StatusOK, &common.BasicResp{
 			StatusCode: -1,
-			StatusMsg:  "身份验证失败",
+			StatusMsg:  "未登录",
 		})
-		return
+	} else {
+		c.JSON(http.StatusOK, service.PublishVideo(c, currentUserId))
 	}
-
-	c.JSON(http.StatusOK, service.PublishVideo(c, userId))
 }
 
 // ListOfPublishedVideo 发布列表
 func ListOfPublishedVideo(ctx context.Context, c *app.RequestContext) {
-	isValid, userId := common.IsValidUser(c.Query("token"), ctx)
-	if !isValid {
-		c.JSON(http.StatusOK, &common.ListOfPublishedVideoResp{
-			StatusCode: -1,
-			StatusMsg:  "身份验证失败",
-		})
-		return
-	}
-	c.JSON(http.StatusOK, service.GetListOfPublishedVideo(userId))
+	val, _ := c.Get("id")
+	currentUserId := val.(int64)
+	targetUserIdStr := c.Query("user_id")
+	targetUserId, _ := strconv.ParseInt(targetUserIdStr, 10, 64)
+	c.JSON(http.StatusOK, service.GetListOfPublishedVideo(currentUserId, targetUserId))
 }
 
 // ListOfFavoredVideo 点赞列表
 func ListOfFavoredVideo(ctx context.Context, c *app.RequestContext) {
-	isValid, userId := common.IsValidUser(c.Query("token"), ctx)
-	if !isValid {
-		c.JSON(http.StatusOK, &common.ListOfPublishedVideoResp{
-			StatusCode: -1,
-			StatusMsg:  "身份验证失败",
-		})
-		return
-	}
-	c.JSON(http.StatusOK, service.GetListOfFavoredVideo(userId))
+	val, _ := c.Get("id")
+	currentUserId := val.(int64)
+	targetUserIdStr := c.Query("user_id")
+	targetUserId, _ := strconv.ParseInt(targetUserIdStr, 10, 64)
+	c.JSON(http.StatusOK, service.GetListOfFavoredVideo(currentUserId, targetUserId))
 }
 
 func VideoFeed(ctx context.Context, c *app.RequestContext) {
-	isValid, userId := common.IsValidUser(c.Query("token"), ctx)
-	if !isValid {
-		c.JSON(http.StatusOK, &common.ListOfPublishedVideoResp{
-			StatusCode: -1,
-			StatusMsg:  "身份验证失败",
-		})
-		return
-	}
-	c.JSON(http.StatusOK, service.VideoFeed(userId))
+	val, _ := c.Get("id")
+	currentUserId := val.(int64)
+	c.JSON(http.StatusOK, service.VideoFeed(currentUserId))
 }

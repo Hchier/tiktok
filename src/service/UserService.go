@@ -61,8 +61,8 @@ func Login(username, password string) *common.UserRegisterOrLoginResp {
 	}
 }
 
-func GetUserInfo(id int64) *common.UserInfoResp {
-	userEntity := mapper.SelectUserById(id)
+func GetUserInfo(targetUserId, currentUserId int64) *common.UserInfoResp {
+	userEntity := mapper.SelectUserById(targetUserId)
 	return &common.UserInfoResp{
 		StatusCode: 0,
 		StatusMsg:  "ok",
@@ -79,11 +79,11 @@ func GetUserInfo(id int64) *common.UserInfoResp {
 			FavoriteCount   int64  `json:"favorite_count"`
 			VideoCount      int64  `json:"video_count"`
 		}{
-			Id:              id,
+			Id:              targetUserId,
 			Name:            userEntity.Username,
 			FollowCount:     userEntity.Follow_count,
 			FollowerCount:   userEntity.Follower_count,
-			IsFollow:        true,
+			IsFollow:        mapper.ExistFollow(targetUserId, currentUserId),
 			Avatar:          common.StaticResources + userEntity.Avatar,
 			BackgroundImage: common.StaticResources + userEntity.Background_image,
 			Signature:       userEntity.Signature,

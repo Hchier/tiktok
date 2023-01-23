@@ -120,7 +120,7 @@ func DoDeleteVideoComment(videoId int64, content string, userId int64, commentId
 	}
 }
 
-func GetVideoCommentByVideoId(videoId int64, userId int64) *common.VideoCommentListResp {
+func GetVideoCommentByVideoId(videoId int64) *common.VideoCommentListResp {
 	success, videoCommentList := mapper.GetVideoCommentByVideoId(videoId)
 	if !success {
 		return &common.VideoCommentListResp{

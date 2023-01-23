@@ -14,13 +14,13 @@ import (
 
 // 点赞或取消点赞
 func VideoFavor(ctx context.Context, c *app.RequestContext) {
-	isValid, userId := common.IsValidUser(c.Query("token"), ctx)
-	if !isValid {
-		c.JSON(http.StatusOK, &common.VideoPublishResp{
+	val, _ := c.Get("id")
+	currentUserId := val.(int64)
+	if currentUserId == -1 {
+		c.JSON(http.StatusOK, &common.BasicResp{
 			StatusCode: -1,
-			StatusMsg:  "身份验证失败",
+			StatusMsg:  "未登录",
 		})
-		return
 	}
 
 	video_id, err := strconv.ParseInt(c.Query("video_id"), 10, 64)
@@ -44,8 +44,8 @@ func VideoFavor(ctx context.Context, c *app.RequestContext) {
 	action_type := c.Query("action_type")
 	//点赞
 	if action_type == "1" {
-		c.JSON(http.StatusOK, service.DoFavorVideo(userId, video_id, authorId))
+		c.JSON(http.StatusOK, service.DoFavorVideo(currentUserId, video_id, authorId))
 	} else { //取消点赞
-		c.JSON(http.StatusOK, service.DoUnFavorVideo(userId, video_id, authorId))
+		c.JSON(http.StatusOK, service.DoUnFavorVideo(currentUserId, video_id, authorId))
 	}
 }

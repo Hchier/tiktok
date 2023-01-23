@@ -13,13 +13,13 @@ import (
 //@Date 2023/1/22 20:58
 
 func FollowOperation(ctx context.Context, c *app.RequestContext) {
-	isValid, userId := common.IsValidUser(string(c.FormValue("token")), ctx)
-	if !isValid {
-		c.JSON(http.StatusOK, &common.VideoPublishResp{
+	val, _ := c.Get("id")
+	currentUserId := val.(int64)
+	if currentUserId == -1 {
+		c.JSON(http.StatusOK, &common.BasicResp{
 			StatusCode: -1,
-			StatusMsg:  "身份验证失败",
+			StatusMsg:  "未登录",
 		})
-		return
 	}
 	actionType := c.Query("action_type")
 	followee, err := strconv.ParseInt(c.Query("to_user_id"), 10, 64)
@@ -28,36 +28,28 @@ func FollowOperation(ctx context.Context, c *app.RequestContext) {
 		c.JSON(http.StatusOK, &common.FollowActionResp{StatusCode: -1, StatusMsg: "fail"})
 	}
 	if actionType == "1" {
-		c.JSON(http.StatusOK, service.DoFollow(userId, followee))
+		c.JSON(http.StatusOK, service.DoFollow(currentUserId, followee))
 	} else {
-		c.JSON(http.StatusOK, service.DoUnFollow(userId, followee))
+		c.JSON(http.StatusOK, service.DoUnFollow(currentUserId, followee))
 	}
 }
 
 // FolloweeList 偶像列表
 func FolloweeList(ctx context.Context, c *app.RequestContext) {
-	isValid, userId := common.IsValidUser(string(c.FormValue("token")), ctx)
-	if !isValid {
-		c.JSON(http.StatusOK, &common.VideoPublishResp{
-			StatusCode: -1,
-			StatusMsg:  "身份验证失败",
-		})
-		return
-	}
+	val, _ := c.Get("id")
+	currentUserId := val.(int64)
+	targetUserIdStr := c.Query("user_id")
+	targetUserId, _ := strconv.ParseInt(targetUserIdStr, 10, 64)
 
-	c.JSON(http.StatusOK, service.GetFolloweeInfo(userId))
+	c.JSON(http.StatusOK, service.GetFolloweeInfo(currentUserId, targetUserId))
 }
 
 // FollowerList 粉丝列表
 func FollowerList(ctx context.Context, c *app.RequestContext) {
-	isValid, userId := common.IsValidUser(string(c.FormValue("token")), ctx)
-	if !isValid {
-		c.JSON(http.StatusOK, &common.VideoPublishResp{
-			StatusCode: -1,
-			StatusMsg:  "身份验证失败",
-		})
-		return
-	}
+	val, _ := c.Get("id")
+	currentUserId := val.(int64)
+	targetUserIdStr := c.Query("user_id")
+	targetUserId, _ := strconv.ParseInt(targetUserIdStr, 10, 64)
 
-	c.JSON(http.StatusOK, service.GetFollowerInfo(userId))
+	c.JSON(http.StatusOK, service.GetFollowerInfo(currentUserId, targetUserId))
 }

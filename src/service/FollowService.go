@@ -11,6 +11,9 @@ import (
 // DoFollow 关注。
 // 3件事。1，插入关注记录。	2，粉丝偶像+1。	3，偶像粉丝+1
 func DoFollow(follower, followee int64) *common.FollowActionResp {
+	if followee == follower {
+		return &common.FollowActionResp{StatusCode: -1, StatusMsg: "您不能关注自己"}
+	}
 	tx, err := mapper.Db.Beginx()
 	if err != nil {
 		common.ErrLog("关注操作时事务开启失败")
@@ -103,8 +106,8 @@ func DoUnFollow(follower, followee int64) *common.FollowActionResp {
 }
 
 // GetFolloweeInfo 偶像列表
-func GetFolloweeInfo(followerId int64) *common.FollowListResp {
-	success, ids := mapper.GetFolloweeIdsByFollowerId(followerId)
+func GetFolloweeInfo(currentUserId, targetUserId int64) *common.FollowListResp {
+	success, ids := mapper.GetFolloweeIdsByFollowerId(targetUserId)
 	if !success {
 		return &common.FollowListResp{StatusCode: -1, StatusMsg: "获取信息失败"}
 	}
@@ -115,14 +118,14 @@ func GetFolloweeInfo(followerId int64) *common.FollowListResp {
 		resp.UserList[i].Id = id
 		resp.UserList[i].Name = user.Username
 		resp.UserList[i].Avatar = common.StaticResources + user.Avatar
-		resp.UserList[i].IsFollow = true
+		resp.UserList[i].IsFollow = mapper.ExistFollow(currentUserId, resp.UserList[i].Id)
 	}
 	return resp
 }
 
 // GetFollowerInfo 粉丝列表
-func GetFollowerInfo(followeeId int64) *common.FollowListResp {
-	success, ids := mapper.GetFollowerIdsByFolloweeId(followeeId)
+func GetFollowerInfo(currentUserId, targetUserId int64) *common.FollowListResp {
+	success, ids := mapper.GetFollowerIdsByFolloweeId(targetUserId)
 	if !success {
 		return &common.FollowListResp{StatusCode: -1, StatusMsg: "获取信息失败"}
 	}
@@ -133,7 +136,7 @@ func GetFollowerInfo(followeeId int64) *common.FollowListResp {
 		resp.UserList[i].Id = id
 		resp.UserList[i].Name = user.Username
 		resp.UserList[i].Avatar = common.StaticResources + user.Avatar
-		resp.UserList[i].IsFollow = mapper.ExistFollow(followeeId, id)
+		resp.UserList[i].IsFollow = mapper.ExistFollow(currentUserId, resp.UserList[i].Id)
 	}
 	return resp
 }

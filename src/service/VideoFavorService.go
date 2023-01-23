@@ -58,7 +58,7 @@ func DoFavorVideo(userId, videoId, authorId int64) *common.VideoFavorResp {
 	}
 
 	//更新用户的点赞数
-	if !mapper.UpdateUserFavoriteCount(1, authorId, tx) {
+	if !mapper.UpdateUserFavoriteCount(1, userId, tx) {
 		err := tx.Rollback()
 		if err != nil {
 			common.ErrLog("更新用户的点赞数时事务回滚失败：", err.Error())
@@ -134,7 +134,7 @@ func DoUnFavorVideo(userId, videoId, authorId int64) *common.VideoFavorResp {
 	}
 
 	//更新用户的点赞数
-	if !mapper.UpdateUserFavoriteCount(2, authorId, tx) {
+	if !mapper.UpdateUserFavoriteCount(2, userId, tx) {
 		err := tx.Rollback()
 		if err != nil {
 			common.ErrLog("更新用户的点赞数时事务回滚失败：", err.Error())
