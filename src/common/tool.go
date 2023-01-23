@@ -1,12 +1,15 @@
 package common
 
 import (
+	"bytes"
 	"context"
 	"encoding/hex"
 	"errors"
 	"fmt"
 	"github.com/cloudwego/hertz/pkg/common/hlog"
+	"github.com/disintegration/imaging"
 	"github.com/go-redis/redis/v8"
+	ffmpeg "github.com/u2takey/ffmpeg-go"
 	"math/rand"
 	"os"
 	"strconv"
@@ -56,7 +59,6 @@ func GetRdb() *redis.Client {
 
 func GetRandStr() string {
 	result := make([]byte, 16/2)
-	println(len(result))
 	rand.Read(result)
 	return hex.EncodeToString(result)
 }
@@ -141,4 +143,27 @@ func IsValidUser(token string, ctx context.Context) (bool, int64) {
 		return false, -1
 	}
 	return true, userId
+}
+
+// CaptureVideoFrameAsPic 截取视频帧作为图片保存
+// 成功返回true
+func CaptureVideoFrameAsPic(videoPath string, frameNum int16, picHeight int, picWidth int, picPath string) bool {
+	buf := bytes.NewBuffer(nil)
+	err := ffmpeg.Input(videoPath).
+		Filter("select", ffmpeg.Args{fmt.Sprintf("gte(n,%d)", frameNum)}).
+		Output("pipe:", ffmpeg.KwArgs{"vframes": 1, "format": "image2", "vcodec": "png"}).
+		WithOutput(buf, os.Stdout).
+		Run()
+	if err != nil {
+		ErrLog("截图失败：", err.Error())
+		return false
+	}
+	img, err := imaging.Decode(buf)
+
+	err = imaging.Save(imaging.Resize(img, picWidth, picHeight, imaging.Lanczos), picPath)
+	if err != nil {
+		ErrLog("图片落盘失败：", err.Error())
+		return false
+	}
+	return true
 }
