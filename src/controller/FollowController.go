@@ -12,6 +12,7 @@ import (
 //@author by Hchier
 //@Date 2023/1/22 20:58
 
+// FollowOperation 关注操作。（关注或取关）
 func FollowOperation(ctx context.Context, c *app.RequestContext) {
 	val, _ := c.Get("id")
 	currentUserId := val.(int64)

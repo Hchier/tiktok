@@ -1,12 +1,7 @@
 package service
 
 import (
-	"bytes"
-	"fmt"
 	"github.com/cloudwego/hertz/pkg/app"
-	ffmpeg "github.com/u2takey/ffmpeg-go"
-	"io"
-	"os"
 	"tiktok/src/common"
 	"tiktok/src/mapper"
 )
@@ -14,21 +9,8 @@ import (
 //@author by Hchier
 //@Date 2023/1/21 14:15
 
-func GetJpegFrame(videoPath string, frameNum int) io.Reader {
-	buf := bytes.NewBuffer(nil)
-	err := ffmpeg.Input(videoPath).
-		Filter("select", ffmpeg.Args{fmt.Sprintf("gte(n,%d)", frameNum)}).
-		Output("pipe:", ffmpeg.KwArgs{"vframes": 1, "format": "image2", "vcodec": "png"}).
-		WithOutput(buf, os.Stdout).
-		Run()
-	if err != nil {
-		common.ErrLog("截图失败：", err.Error())
-	}
-	return buf
-}
-
+// PublishVideo 发布视频
 func PublishVideo(c *app.RequestContext, userId int64) *common.VideoPublishResp {
-
 	videoData, _ := c.FormFile("data")
 	videoData.Filename = common.GetSnowId() + ".mp4"
 	videoPath := common.VideoDataDest + videoData.Filename

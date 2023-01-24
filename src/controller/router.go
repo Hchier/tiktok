@@ -13,7 +13,6 @@ var Hertz *server.Hertz
 func init() {
 	Hertz = server.Default(server.WithHostPorts("192.168.0.105:8080"))
 
-	//登录时禁止访问
 	Hertz.POST("/douyin/user/register/", UserRegister)
 	Hertz.POST("/douyin/user/login/", UserLogin)
 
@@ -27,8 +26,7 @@ func init() {
 		GET("/douyin/relation/follow/list/", FolloweeList).
 		GET("/douyin/relation/follower/list/", FollowerList).
 		GET("/douyin/relation/friend/list/", FollowerList).
-
-		//未登录时可以访问，但登陆与否所见相同
+		//由于无法点赞评论，故登陆与否所见相同
 		GET("/douyin/comment/list/", VideoCommentList).
 
 		//未登录时禁止访问

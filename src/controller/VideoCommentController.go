@@ -12,6 +12,7 @@ import (
 //@author by Hchier
 //@Date 2023/1/22 13:11
 
+// VideoCommentAction 评论操作。（发表或删除）
 func VideoCommentAction(ctx context.Context, c *app.RequestContext) {
 	val, _ := c.Get("id")
 	currentUserId := val.(int64)
@@ -35,6 +36,7 @@ func VideoCommentAction(ctx context.Context, c *app.RequestContext) {
 	}
 }
 
+// VideoCommentList 视频的评论列表
 func VideoCommentList(ctx context.Context, c *app.RequestContext) {
 	videoId, _ := strconv.ParseInt(c.Query("video_id"), 10, 64)
 

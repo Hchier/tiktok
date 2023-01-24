@@ -10,14 +10,6 @@ import (
 //@author by Hchier
 //@Date 2023/1/22 10:29
 
-// InsertFollow 插入关注记录
-func InsertFollow(follower, followee int64) {
-	_, err := Db.Exec("insert into follow (follower, followee, created_time) values(?, ?, ?)", follower, followee, time.Now())
-	if err != nil {
-		common.ErrLog("插入关注记录失败：", err.Error())
-	}
-}
-
 // OperationFollow 操作关注记录。opType -> 1：插入		2：删除
 func OperationFollow(opType int8, follower, followee int64, tx *sqlx.Tx) bool {
 	var res sql.Result
@@ -72,11 +64,11 @@ func GetFolloweeIdsByFollowerId(followerId int64) (bool, []int64) {
 	return true, ids
 }
 
-// GetFollowerIdsByFollowee 得到用户的粉丝们的id
+// GetFollowerIdsByFolloweeId 得到用户的粉丝们的id
 // 成功返回true
-func GetFollowerIdsByFolloweeId(followerId int64) (bool, []int64) {
+func GetFollowerIdsByFolloweeId(followeeId int64) (bool, []int64) {
 	var ids []int64
-	err := Db.Select(&ids, "select follower from follow where followee = ? and deleted = 0", followerId)
+	err := Db.Select(&ids, "select follower from follow where followee = ? and deleted = 0", followeeId)
 	if err != nil {
 		common.ErrLog("GetFollowerIdsByFollowee时出错：", ids)
 		return false, nil

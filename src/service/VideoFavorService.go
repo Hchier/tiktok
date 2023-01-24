@@ -26,10 +26,10 @@ func DoFavorVideo(userId, videoId, authorId int64) *common.VideoFavorResp {
 		err := tx.Rollback()
 		if err != nil {
 			common.ErrLog("插入视频点赞信息时事务回滚失败：", err.Error())
-			return &common.VideoFavorResp{
-				StatusCode: -1,
-				StatusMsg:  "插入视频点赞信息时事务回滚失败",
-			}
+		}
+		return &common.VideoFavorResp{
+			StatusCode: -1,
+			StatusMsg:  "点赞失败",
 		}
 	}
 
@@ -38,10 +38,10 @@ func DoFavorVideo(userId, videoId, authorId int64) *common.VideoFavorResp {
 		err := tx.Rollback()
 		if err != nil {
 			common.ErrLog("更新视频获赞数时事务回滚失败：", err.Error())
-			return &common.VideoFavorResp{
-				StatusCode: -1,
-				StatusMsg:  "更新视频获赞数时事务回滚失败",
-			}
+		}
+		return &common.VideoFavorResp{
+			StatusCode: -1,
+			StatusMsg:  "点赞失败",
 		}
 	}
 
@@ -50,10 +50,10 @@ func DoFavorVideo(userId, videoId, authorId int64) *common.VideoFavorResp {
 		err := tx.Rollback()
 		if err != nil {
 			common.ErrLog("更新作者的获赞数时事务回滚失败：", err.Error())
-			return &common.VideoFavorResp{
-				StatusCode: -1,
-				StatusMsg:  "更新作者的获赞数时事务回滚失败",
-			}
+		}
+		return &common.VideoFavorResp{
+			StatusCode: -1,
+			StatusMsg:  "更新作者的获赞数时事务回滚失败",
 		}
 	}
 
@@ -62,10 +62,10 @@ func DoFavorVideo(userId, videoId, authorId int64) *common.VideoFavorResp {
 		err := tx.Rollback()
 		if err != nil {
 			common.ErrLog("更新用户的点赞数时事务回滚失败：", err.Error())
-			return &common.VideoFavorResp{
-				StatusCode: -1,
-				StatusMsg:  "更新用户的点赞数时事务回滚失败",
-			}
+		}
+		return &common.VideoFavorResp{
+			StatusCode: -1,
+			StatusMsg:  "更新用户的点赞数时事务回滚失败",
 		}
 	}
 
@@ -102,10 +102,10 @@ func DoUnFavorVideo(userId, videoId, authorId int64) *common.VideoFavorResp {
 		err := tx.Rollback()
 		if err != nil {
 			common.ErrLog("删除视频点赞信息时事务回滚失败：", err.Error())
-			return &common.VideoFavorResp{
-				StatusCode: -1,
-				StatusMsg:  "删除视频点赞信息时事务回滚失败",
-			}
+		}
+		return &common.VideoFavorResp{
+			StatusCode: -1,
+			StatusMsg:  "删除视频点赞信息时事务回滚失败",
 		}
 	}
 
@@ -114,10 +114,10 @@ func DoUnFavorVideo(userId, videoId, authorId int64) *common.VideoFavorResp {
 		err := tx.Rollback()
 		if err != nil {
 			common.ErrLog("更新视频获赞数时事务回滚失败：", err.Error())
-			return &common.VideoFavorResp{
-				StatusCode: -1,
-				StatusMsg:  "更新视频获赞数时事务回滚失败",
-			}
+		}
+		return &common.VideoFavorResp{
+			StatusCode: -1,
+			StatusMsg:  "更新视频获赞数时事务回滚失败",
 		}
 	}
 
@@ -126,10 +126,10 @@ func DoUnFavorVideo(userId, videoId, authorId int64) *common.VideoFavorResp {
 		err := tx.Rollback()
 		if err != nil {
 			common.ErrLog("更新作者的获赞数时事务回滚失败：", err.Error())
-			return &common.VideoFavorResp{
-				StatusCode: -1,
-				StatusMsg:  "更新作者的获赞数时事务回滚失败",
-			}
+		}
+		return &common.VideoFavorResp{
+			StatusCode: -1,
+			StatusMsg:  "更新作者的获赞数时事务回滚失败",
 		}
 	}
 
@@ -138,10 +138,10 @@ func DoUnFavorVideo(userId, videoId, authorId int64) *common.VideoFavorResp {
 		err := tx.Rollback()
 		if err != nil {
 			common.ErrLog("更新用户的点赞数时事务回滚失败：", err.Error())
-			return &common.VideoFavorResp{
-				StatusCode: -1,
-				StatusMsg:  "更新用户的点赞数时事务回滚失败",
-			}
+		}
+		return &common.VideoFavorResp{
+			StatusCode: -1,
+			StatusMsg:  "更新用户的点赞数时事务回滚失败",
 		}
 	}
 

@@ -43,6 +43,7 @@ func ListOfFavoredVideo(ctx context.Context, c *app.RequestContext) {
 	c.JSON(http.StatusOK, service.GetListOfFavoredVideo(currentUserId, targetUserId))
 }
 
+// VideoFeed 视频流
 func VideoFeed(ctx context.Context, c *app.RequestContext) {
 	val, _ := c.Get("id")
 	currentUserId := val.(int64)
