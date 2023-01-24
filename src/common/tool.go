@@ -58,8 +58,9 @@ func GetRdb() *redis.Client {
 	})
 }
 
-func GetRandStr() string {
-	result := make([]byte, 16/2)
+// GetRandStr 得到长度为len的随机字符串
+func GetRandStr(len int8) string {
+	result := make([]byte, len/2)
 	rand.Read(result)
 	return hex.EncodeToString(result)
 }
@@ -71,6 +72,7 @@ func Log(dest string, v ...interface{}) {
 	hlog.Error(v...)
 }
 
+// ErrLog 打印错误日志
 func ErrLog(v ...interface{}) {
 	Log(ErrLogDest, v)
 }
@@ -171,4 +173,11 @@ func CaptureVideoFrameAsPic(videoPath string, frameNum int16, picHeight int, pic
 		return false
 	}
 	return true
+}
+
+func TimeTask(d time.Duration, task func()) {
+	ticker := time.NewTicker(d)
+	for range ticker.C {
+		task()
+	}
 }

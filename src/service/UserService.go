@@ -2,9 +2,12 @@ package service
 
 import (
 	"context"
-	"github.com/cloudwego/hertz/pkg/common/hlog"
+	"github.com/go-redis/redis/v8"
+	uuid "github.com/satori/go.uuid"
+	"strconv"
 	"tiktok/src/common"
 	"tiktok/src/mapper"
+	"time"
 )
 
 //@author by Hchier
@@ -94,15 +97,44 @@ func GetUserInfo(targetUserId, currentUserId int64) *common.UserInfoResp {
 	}
 }
 
+// SetToken 2件事。1，将<token, id>放入tokens(Hash)中。 2，将<token, expireTime>放入expireTime(Zset)中
 func SetToken(id int64, username string) string {
-	var token string = username + common.GetRandStr()
+	var token string = username + "-" + uuid.NewV4().String()
 	ctx := context.Background()
+
 	_, err := common.Rdb.HSet(ctx, "tokens", token, id).Result()
 	if err != nil {
-		file := common.GetFile(common.ErrLogDest)
-		defer file.Close()
-		hlog.SetOutput(file)
-		hlog.Error("将id-token放入redis失败：", err.Error())
+		common.ErrLog("将token-id放入redis失败：", err.Error())
 	}
+
+	_, err = common.Rdb.ZAdd(ctx, "expireTime", &redis.Z{Member: token, Score: float64(time.Now().Add(time.Minute * 5).Unix())}).Result()
+	if err != nil {
+		common.ErrLog("将token-expireTime放入redis失败：", err.Error())
+	}
+
 	return token
+}
+
+// RemoveExpiredToken 移除过期的token。2件事：1，从tokens(Hash)中移除过期的<token, id>。 2，从expireTime(Zset)中移除过期的<token, expireTime>
+func RemoveExpiredToken() {
+	println("RemoveExpiredToken")
+	timeNowStr := strconv.FormatInt(time.Now().Unix(), 10)
+	// 得到已经过期的tokens
+	tokens, err := common.Rdb.ZRangeByScore(context.Background(), "expireTime", &redis.ZRangeBy{Min: string(rune(0)), Max: timeNowStr}).Result()
+	if err != nil {
+		common.ErrLog(err.Error())
+	}
+	//
+	count, err := common.Rdb.HDel(context.Background(), "tokens", tokens...).Result()
+	if err != nil {
+		common.ErrLog(err.Error())
+	}
+	println("从tokens中移除", count, "个")
+
+	//
+	count, err = common.Rdb.ZRemRangeByScore(context.Background(), "expireTime", string(rune(0)), timeNowStr).Result()
+	if err != nil {
+		println(err.Error())
+	}
+	println("从expireTime中移除", count, "个")
 }
