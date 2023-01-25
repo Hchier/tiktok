@@ -53,7 +53,7 @@ func DoFavorVideo(userId, videoId, authorId int64) *common.VideoFavorResp {
 		}
 		return &common.VideoFavorResp{
 			StatusCode: -1,
-			StatusMsg:  "更新作者的获赞数时事务回滚失败",
+			StatusMsg:  "点赞失败",
 		}
 	}
 
@@ -65,7 +65,7 @@ func DoFavorVideo(userId, videoId, authorId int64) *common.VideoFavorResp {
 		}
 		return &common.VideoFavorResp{
 			StatusCode: -1,
-			StatusMsg:  "更新用户的点赞数时事务回滚失败",
+			StatusMsg:  "点赞失败",
 		}
 	}
 
@@ -93,7 +93,7 @@ func DoUnFavorVideo(userId, videoId, authorId int64) *common.VideoFavorResp {
 		common.ErrLog("视频取消点赞时事务开启失败：", err.Error())
 		return &common.VideoFavorResp{
 			StatusCode: -1,
-			StatusMsg:  "视频取消点赞时事务开启失败",
+			StatusMsg:  "点赞失败",
 		}
 	}
 
@@ -105,7 +105,7 @@ func DoUnFavorVideo(userId, videoId, authorId int64) *common.VideoFavorResp {
 		}
 		return &common.VideoFavorResp{
 			StatusCode: -1,
-			StatusMsg:  "删除视频点赞信息时事务回滚失败",
+			StatusMsg:  "点赞失败",
 		}
 	}
 
@@ -117,7 +117,7 @@ func DoUnFavorVideo(userId, videoId, authorId int64) *common.VideoFavorResp {
 		}
 		return &common.VideoFavorResp{
 			StatusCode: -1,
-			StatusMsg:  "更新视频获赞数时事务回滚失败",
+			StatusMsg:  "点赞失败",
 		}
 	}
 
@@ -129,7 +129,7 @@ func DoUnFavorVideo(userId, videoId, authorId int64) *common.VideoFavorResp {
 		}
 		return &common.VideoFavorResp{
 			StatusCode: -1,
-			StatusMsg:  "更新作者的获赞数时事务回滚失败",
+			StatusMsg:  "点赞失败",
 		}
 	}
 
@@ -141,7 +141,7 @@ func DoUnFavorVideo(userId, videoId, authorId int64) *common.VideoFavorResp {
 		}
 		return &common.VideoFavorResp{
 			StatusCode: -1,
-			StatusMsg:  "更新用户的点赞数时事务回滚失败",
+			StatusMsg:  "点赞失败",
 		}
 	}
 

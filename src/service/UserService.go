@@ -16,7 +16,7 @@ import (
 // Register
 // 用户注册。首先检查用户名是否被占用。
 func Register(username, password, avatar, backgroundImage, signature string) *common.UserRegisterOrLoginResp {
-	if mapper.ExistUser(username) {
+	if mapper.ExistUserByUsername(username) {
 		return &common.UserRegisterOrLoginResp{
 			StatusCode: -1,
 			StatusMsg:  "username已被使用",
@@ -66,6 +66,12 @@ func Login(username, password string) *common.UserRegisterOrLoginResp {
 
 func GetUserInfo(targetUserId, currentUserId int64) *common.UserInfoResp {
 	userEntity := mapper.SelectUserById(targetUserId)
+	if userEntity.Id == -1 {
+		return &common.UserInfoResp{
+			StatusCode: -1,
+			StatusMsg:  "用户不存在",
+		}
+	}
 	return &common.UserInfoResp{
 		StatusCode: 0,
 		StatusMsg:  "ok",
@@ -82,11 +88,11 @@ func GetUserInfo(targetUserId, currentUserId int64) *common.UserInfoResp {
 			FavoriteCount   int64  `json:"favorite_count"`
 			VideoCount      int64  `json:"video_count"`
 		}{
-			Id:              targetUserId,
+			Id:              userEntity.Id,
 			Name:            userEntity.Username,
 			FollowCount:     userEntity.Follow_count,
 			FollowerCount:   userEntity.Follower_count,
-			IsFollow:        mapper.ExistFollow(targetUserId, currentUserId),
+			IsFollow:        mapper.ExistFollow(currentUserId, targetUserId),
 			Avatar:          common.StaticResources + userEntity.Avatar,
 			BackgroundImage: common.StaticResources + userEntity.Background_image,
 			Signature:       userEntity.Signature,

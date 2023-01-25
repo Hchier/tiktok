@@ -9,7 +9,7 @@ import (
 //@author by Hchier
 //@Date 2023/1/21 14:15
 
-// PublishVideo 发布视频
+// PublishVideo 发布视频（）
 func PublishVideo(c *app.RequestContext, userId int64) *common.VideoPublishResp {
 	videoData, _ := c.FormFile("data")
 	videoData.Filename = common.GetSnowId() + ".mp4"
@@ -70,6 +70,12 @@ func TransferVideoEntityToVideoVo(videos []mapper.Video, currentUserId int64) []
 
 // GetListOfPublishedVideo 拿到用户发布的视频列表
 func GetListOfPublishedVideo(currentUserId, targetUserId int64) *common.ListOfPublishedVideoResp {
+	if !mapper.ExistUserById(targetUserId) {
+		return &common.ListOfPublishedVideoResp{
+			StatusCode: -1,
+			StatusMsg:  "用户不存在",
+		}
+	}
 	valid, videos := mapper.GetPublishedVideoListByUserId(targetUserId)
 	if !valid {
 		return &common.ListOfPublishedVideoResp{
@@ -92,6 +98,12 @@ func GetAuthorIdByVideoId(videoId int64) int64 {
 
 // GetListOfFavoredVideo 拿到用户点赞的视频列表
 func GetListOfFavoredVideo(currentUserId, targetUserId int64) *common.ListOfPublishedVideoResp {
+	if !mapper.ExistUserById(targetUserId) {
+		return &common.ListOfPublishedVideoResp{
+			StatusCode: -1,
+			StatusMsg:  "用户不存在",
+		}
+	}
 	valid, videos := mapper.GetFavoredVideoListByUserId(targetUserId)
 	if !valid {
 		return &common.ListOfPublishedVideoResp{

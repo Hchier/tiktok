@@ -2,7 +2,6 @@ package mapper
 
 import (
 	"database/sql"
-	"github.com/cloudwego/hertz/pkg/common/hlog"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/jmoiron/sqlx"
 	"tiktok/src/common"
@@ -18,19 +17,25 @@ func InsertUser(username, password, avatar, backgroundImage, signature string) (
 	res, err := Db.Exec("insert into user (username, password, avatar, background_image, signature) VALUES (?, ?, ?, ?, ?)",
 		username, password, avatar, backgroundImage, signature)
 	if err != nil {
-		file := common.GetFile(common.ErrLogDest)
-		defer file.Close()
-		hlog.SetOutput(file)
-		hlog.Error("插入失败：", err.Error())
+		common.ErrLog("插入失败：", err.Error())
 		return -1, err.Error()
 	}
 	id, _ := res.LastInsertId()
 	return id, "注册成功"
 }
 
-func ExistUser(username string) bool {
-	var id int8
+func ExistUserByUsername(username string) bool {
+	var id int64
 	err := Db.Get(&id, "select id from user where username = ? and deleted = 0", username)
+	if err != nil {
+		return false
+	}
+	return true
+}
+
+func ExistUserById(targetUserId int64) bool {
+	var id int64
+	err := Db.Get(&id, "select id from user where id = ? and deleted = 0", targetUserId)
 	if err != nil {
 		return false
 	}
@@ -46,11 +51,14 @@ func GetIdByUsernameAndPassword(username, password string) int64 {
 	return id
 }
 
+// SelectUserById 根据id查找用户信息
+// 若用户不存在，则返回的user的id为-1
 func SelectUserById(id int64) User {
 	var user User
 	err := Db.Get(&user, "select * from user where id = ? and deleted = 0", id)
 	if err != nil {
 		common.ErrLog("查找用户信息失败：", err.Error())
+		user.Id = -1
 	}
 	return user
 }

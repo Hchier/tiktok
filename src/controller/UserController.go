@@ -15,7 +15,8 @@ import (
 
 func UserRegister(ctx context.Context, c *app.RequestContext) {
 	username := c.Query("username")
-	password := c.Query("password")
+	password := common.Md5Encode(c.Query("password"))
+
 	if username == "" || password == "" {
 		c.JSON(http.StatusOK, &common.UserRegisterOrLoginResp{
 			StatusCode: -1,
@@ -33,7 +34,7 @@ func UserRegister(ctx context.Context, c *app.RequestContext) {
 
 func UserLogin(ctx context.Context, c *app.RequestContext) {
 	username := c.Query("username")
-	password := c.Query("password")
+	password := common.Md5Encode(c.Query("password"))
 	if username == "" || password == "" {
 		c.JSON(http.StatusOK, &common.UserRegisterOrLoginResp{
 			StatusCode: -1,

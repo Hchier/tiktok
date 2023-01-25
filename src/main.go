@@ -14,8 +14,9 @@ import (
 var wg sync.WaitGroup
 
 func main() {
+	common.DelKeys("tokens", "expireTime")
 	wg.Add(1)
-	go common.TimeTask(time.Second*2, service.RemoveExpiredToken)
+	go common.TimeTask(time.Minute*2, service.RemoveExpiredToken)
 	controller.Hertz.Spin()
 	wg.Wait()
 }
