@@ -123,7 +123,6 @@ func SetToken(id int64, username string) string {
 
 // RemoveExpiredToken 移除过期的token。2件事：1，从tokens(Hash)中移除过期的<token, id>。 2，从expireTime(Zset)中移除过期的<token, expireTime>
 func RemoveExpiredToken() {
-	println("RemoveExpiredToken")
 	timeNowStr := strconv.FormatInt(time.Now().Unix(), 10)
 	// 得到已经过期的tokens
 	tokens, err := common.Rdb.ZRangeByScore(context.Background(), "expireTime", &redis.ZRangeBy{Min: string(rune(0)), Max: timeNowStr}).Result()
@@ -131,14 +130,16 @@ func RemoveExpiredToken() {
 		common.ErrLog(err.Error())
 	}
 	//
-	count, err := common.Rdb.HDel(context.Background(), "tokens", tokens...).Result()
-	if err != nil {
-		common.ErrLog(err.Error())
+	if len(tokens) > 0 {
+		count, err := common.Rdb.HDel(context.Background(), "tokens", tokens...).Result()
+		if err != nil {
+			common.ErrLog(err.Error())
+		}
+		println("从tokens中移除", count, "个")
 	}
-	println("从tokens中移除", count, "个")
 
 	//
-	count, err = common.Rdb.ZRemRangeByScore(context.Background(), "expireTime", string(rune(0)), timeNowStr).Result()
+	count, err := common.Rdb.ZRemRangeByScore(context.Background(), "expireTime", string(rune(0)), timeNowStr).Result()
 	if err != nil {
 		println(err.Error())
 	}

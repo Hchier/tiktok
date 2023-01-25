@@ -3,14 +3,17 @@ package common
 //@author by Hchier
 //@Date 2023/1/25 10:10
 
-const RedisAddr = "127.0.0.1:6379"
-const RedisPassword = ""
+// 以下5个const在部署时要更改
+const RedisAddr = "127.0.0.1:6379" //
+const RedisPassword = ""           //
+const ErrLogDest = "E:\\hchier\\GoProjects\\tiktok\\logs/err.log"
+const StaticResourcePrefix = "E:\\static\\tiktok\\"
+const StaticResources = "http://192.168.0.105:8010/tiktok/"
 
-const ErrLogDest = "logs/err.log"
-const VideoDataDest = "static\\video\\data\\"
-const VideoCoverDest = "static\\video\\cover\\"
-
-const StaticResources = "http://192.168.0.105:8010/"
+const AvatarDest = "avatar\\"
+const BackgroundImageDest = "bg\\"
+const VideoDataDest = "video\\data\\"
+const VideoCoverDest = "video\\cover\\"
 
 var Signatures = [...]string{
 	"雄关漫道真如铁，而今迈步从头越。",

@@ -26,8 +26,8 @@ func UserRegister(ctx context.Context, c *app.RequestContext) {
 		})
 		return
 	}
-	avatar := "static/avatar/" + strconv.Itoa(rand.Intn(10)) + ".png"
-	backgroundImage := "static/bg/" + strconv.Itoa(rand.Intn(10)) + ".png"
+	avatar := common.AvatarDest + strconv.Itoa(rand.Intn(10)) + ".png"
+	backgroundImage := common.BackgroundImageDest + strconv.Itoa(rand.Intn(10)) + ".png"
 	signature := common.Signatures[rune(rand.Intn(10))]
 	c.JSON(http.StatusOK, service.Register(username, password, avatar, backgroundImage, signature))
 }

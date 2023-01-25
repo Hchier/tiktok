@@ -77,3 +77,12 @@ func Md5Encode(str string) string {
 	code := fmt.Sprintf("%x", srcCode)
 	return code
 }
+
+func MakeDirs(path ...string) {
+	for _, item := range path {
+		err := os.MkdirAll(item, os.ModePerm) //创建多级目录\
+		if err != nil {
+			print(err.Error())
+		}
+	}
+}

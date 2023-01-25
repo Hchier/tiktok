@@ -13,11 +13,13 @@ import (
 func PublishVideo(c *app.RequestContext, userId int64) *common.VideoPublishResp {
 	videoData, _ := c.FormFile("data")
 	videoData.Filename = common.GetSnowId() + ".mp4"
-	videoPath := common.VideoDataDest + videoData.Filename
+	playUrl := common.VideoDataDest + videoData.Filename
+	videoAbsPath := common.StaticResourcePrefix + playUrl
 	videoTitle := string(c.FormValue("title"))
 	coverUrl := common.VideoCoverDest + common.GetSnowId() + ".png"
+	coverAbsUrl := common.StaticResourcePrefix + coverUrl
 
-	err := c.SaveUploadedFile(videoData, videoPath)
+	err := c.SaveUploadedFile(videoData, common.StaticResourcePrefix+playUrl)
 	if err != nil {
 		common.ErrLog("视频落盘出错：", err.Error())
 		return &common.VideoPublishResp{
@@ -26,14 +28,14 @@ func PublishVideo(c *app.RequestContext, userId int64) *common.VideoPublishResp 
 		}
 	}
 
-	if !common.CaptureVideoFrameAsPic(videoPath, 1, 480, 270, coverUrl) {
+	if !common.CaptureVideoFrameAsPic(videoAbsPath, 1, 480, 270, coverAbsUrl) {
 		return &common.VideoPublishResp{
 			StatusCode: -1,
 			StatusMsg:  "发布失败",
 		}
 	}
 
-	mapper.InsertVideo(userId, videoPath, coverUrl, videoTitle)
+	mapper.InsertVideo(userId, playUrl, coverUrl, videoTitle)
 	return &common.VideoPublishResp{
 		StatusCode: 0,
 		StatusMsg:  "发布成功",
