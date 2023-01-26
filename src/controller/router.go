@@ -34,5 +34,4 @@ func init() {
 		POST("/douyin/favorite/action/", VideoFavor).
 		POST("/douyin/comment/action/", VideoCommentAction).
 		POST("/douyin/relation/action/", FollowOperation)
-
 }

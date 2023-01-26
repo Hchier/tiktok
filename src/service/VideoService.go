@@ -35,7 +35,42 @@ func PublishVideo(c *app.RequestContext, userId int64) *common.VideoPublishResp 
 		}
 	}
 
-	mapper.InsertVideo(userId, playUrl, coverUrl, videoTitle)
+	tx, err := common.Db.Beginx()
+	if err != nil {
+		common.ErrLog("发布视频事务开启失败：", err.Error())
+		return &common.VideoPublishResp{
+			StatusCode: -1,
+			StatusMsg:  "发布失败",
+		}
+	}
+	if !mapper.InsertVideo(tx, userId, playUrl, coverUrl, videoTitle) {
+		err := tx.Rollback()
+		if err != nil {
+			common.ErrLog("发布视频事务回滚失败：", err.Error())
+			return &common.VideoPublishResp{
+				StatusCode: -1,
+				StatusMsg:  "发布失败",
+			}
+		}
+	}
+	if !mapper.UpdateUserVideoCount(1, userId, tx) {
+		err := tx.Rollback()
+		if err != nil {
+			common.ErrLog("发布视频事务回滚失败：", err.Error())
+			return &common.VideoPublishResp{
+				StatusCode: -1,
+				StatusMsg:  "发布失败",
+			}
+		}
+	}
+
+	if tx.Commit() != nil {
+		common.ErrLog("发布视频事务提交失败：", err.Error())
+		return &common.VideoPublishResp{
+			StatusCode: -1,
+			StatusMsg:  "发布失败",
+		}
+	}
 	return &common.VideoPublishResp{
 		StatusCode: 0,
 		StatusMsg:  "发布成功",

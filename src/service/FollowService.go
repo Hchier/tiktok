@@ -14,7 +14,7 @@ func DoFollow(follower, followee int64) *common.FollowActionResp {
 	if followee == follower {
 		return &common.FollowActionResp{StatusCode: -1, StatusMsg: "您不能关注自己"}
 	}
-	tx, err := mapper.Db.Beginx()
+	tx, err := common.Db.Beginx()
 	if err != nil {
 		common.ErrLog("关注操作时事务开启失败")
 		return &common.FollowActionResp{StatusCode: -1, StatusMsg: "关注失败"}
@@ -61,7 +61,7 @@ func DoFollow(follower, followee int64) *common.FollowActionResp {
 // DoUnFollow 取消关注。
 // 3件事。1，插入关注记录。	2，粉丝偶像-1。	3，偶像粉丝-1
 func DoUnFollow(follower, followee int64) *common.FollowActionResp {
-	tx, err := mapper.Db.Beginx()
+	tx, err := common.Db.Beginx()
 	if err != nil {
 		common.ErrLog("取消关注时事务开启失败")
 		return &common.FollowActionResp{StatusCode: -1, StatusMsg: "关取关注失败"}

@@ -46,6 +46,6 @@ func OperateVideoFavor(opType int8, userId, videoId int64, tx *sqlx.Tx) bool {
 // 若点了，返回true
 func ExistVideoFavor(userId, videoId int64) bool {
 	var count int64
-	_ = Db.Get(&count, "select count(*) from video_favor where user_id = ? and video_id = ? and deleted = 0", userId, videoId)
+	_ = common.Db.Get(&count, "select count(*) from video_favor where user_id = ? and video_id = ? and deleted = 0", userId, videoId)
 	return count > 0
 }

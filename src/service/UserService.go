@@ -112,8 +112,10 @@ func SetToken(id int64, username string) string {
 	if err != nil {
 		common.ErrLog("将token-id放入redis失败：", err.Error())
 	}
-
-	_, err = common.Rdb.ZAdd(ctx, "expireTime", &redis.Z{Member: token, Score: float64(time.Now().Add(time.Minute * 5).Unix())}).Result()
+	common.Rdb.ZAdd(ctx, "expireTime", &redis.Z{
+		Member: token,
+		Score:  float64(time.Now().Add(time.Duration(time.Minute.Nanoseconds() * common.TokenValidity)).Unix())},
+	).Result()
 	if err != nil {
 		common.ErrLog("将token-expireTime放入redis失败：", err.Error())
 	}
@@ -131,17 +133,15 @@ func RemoveExpiredToken() {
 	}
 	//
 	if len(tokens) > 0 {
-		count, err := common.Rdb.HDel(context.Background(), "tokens", tokens...).Result()
+		_, err := common.Rdb.HDel(context.Background(), "tokens", tokens...).Result()
 		if err != nil {
 			common.ErrLog(err.Error())
 		}
-		println("从tokens中移除", count, "个")
 	}
 
 	//
-	count, err := common.Rdb.ZRemRangeByScore(context.Background(), "expireTime", string(rune(0)), timeNowStr).Result()
+	_, err = common.Rdb.ZRemRangeByScore(context.Background(), "expireTime", string(rune(0)), timeNowStr).Result()
 	if err != nil {
 		println(err.Error())
 	}
-	println("从expireTime中移除", count, "个")
 }

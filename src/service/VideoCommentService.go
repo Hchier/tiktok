@@ -12,7 +12,7 @@ import (
 // DoPublishVideoComment 发布视频评论
 // 1，插入评论		2，更新视频评论数
 func DoPublishVideoComment(videoId int64, content string, userId int64, commentId int64) *common.CommentActionResp {
-	tx, err := mapper.Db.Beginx()
+	tx, err := common.Db.Beginx()
 	if err != nil {
 		common.ErrLog("发布视频评论时事务开启失败：", err.Error())
 		return &common.CommentActionResp{
@@ -77,7 +77,7 @@ func DoPublishVideoComment(videoId int64, content string, userId int64, commentI
 // DoDeleteVideoComment 删除视频评论
 // 1，删除评论		2，更新视频评论数
 func DoDeleteVideoComment(videoId int64, content string, userId int64, commentId int64) *common.CommentActionResp {
-	tx, err := mapper.Db.Beginx()
+	tx, err := common.Db.Beginx()
 	if err != nil {
 		common.ErrLog("删除视频评论时事务开启失败：", err.Error())
 		return &common.CommentActionResp{

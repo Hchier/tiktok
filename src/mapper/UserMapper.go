@@ -14,7 +14,7 @@ import (
 // 成功插入则返回用户id
 // 失败则返回-1
 func InsertUser(username, password, avatar, backgroundImage, signature string) (int64, string) {
-	res, err := Db.Exec("insert into user (username, password, avatar, background_image, signature) VALUES (?, ?, ?, ?, ?)",
+	res, err := common.Db.Exec("insert into user (username, password, avatar, background_image, signature) VALUES (?, ?, ?, ?, ?)",
 		username, password, avatar, backgroundImage, signature)
 	if err != nil {
 		common.ErrLog("插入失败：", err.Error())
@@ -26,7 +26,7 @@ func InsertUser(username, password, avatar, backgroundImage, signature string) (
 
 func ExistUserByUsername(username string) bool {
 	var id int64
-	err := Db.Get(&id, "select id from user where username = ? and deleted = 0", username)
+	err := common.Db.Get(&id, "select id from user where username = ? and deleted = 0", username)
 	if err != nil {
 		return false
 	}
@@ -35,7 +35,7 @@ func ExistUserByUsername(username string) bool {
 
 func ExistUserById(targetUserId int64) bool {
 	var id int64
-	err := Db.Get(&id, "select id from user where id = ? and deleted = 0", targetUserId)
+	err := common.Db.Get(&id, "select id from user where id = ? and deleted = 0", targetUserId)
 	if err != nil {
 		return false
 	}
@@ -44,7 +44,7 @@ func ExistUserById(targetUserId int64) bool {
 
 func GetIdByUsernameAndPassword(username, password string) int64 {
 	var id int64
-	err := Db.Get(&id, "select id from user where username = ? and password = ? and deleted = 0", username, password)
+	err := common.Db.Get(&id, "select id from user where username = ? and password = ? and deleted = 0", username, password)
 	if err != nil {
 		return -1
 	}
@@ -55,7 +55,7 @@ func GetIdByUsernameAndPassword(username, password string) int64 {
 // 若用户不存在，则返回的user的id为-1
 func SelectUserById(id int64) User {
 	var user User
-	err := Db.Get(&user, "select * from user where id = ? and deleted = 0", id)
+	err := common.Db.Get(&user, "select * from user where id = ? and deleted = 0", id)
 	if err != nil {
 		common.ErrLog("查找用户信息失败：", err.Error())
 		user.Id = -1
@@ -140,12 +140,34 @@ func UpdateUserFollowCount(opType int8, userId int64, tx *sqlx.Tx) bool {
 		res, err = tx.Exec("update user set follow_count = follow_count - 1 where id = ?", userId)
 	}
 	if err != nil {
-		common.ErrLog("更新用户粉丝数失败", err.Error())
+		common.ErrLog("更新用户粉丝数失败：", err.Error())
 		return false
 	}
 	count, _ := res.RowsAffected()
 	if count == 0 {
-		common.ErrLog("更新用户粉丝数时RowsAffected为0", err.Error())
+		common.ErrLog("更新用户粉丝数时RowsAffected为0：", err.Error())
+		return false
+	}
+	return true
+}
+
+// UpdateUserVideoCount 更新用户发布的视频数量。opType -> 1：加1；2：减1
+// 成功返回true
+func UpdateUserVideoCount(opType int8, userId int64, tx *sqlx.Tx) bool {
+	var res sql.Result
+	var err error
+	if opType == 1 {
+		res, err = tx.Exec("update user set video_count = video_count + 1 where id = ?", userId)
+	} else {
+		res, err = tx.Exec("update user set video_count = video_count - 1 where id = ?", userId)
+	}
+	if err != nil {
+		common.ErrLog("更新用户发布的视频数量失败：", err.Error())
+		return false
+	}
+	count, _ := res.RowsAffected()
+	if count == 0 {
+		common.ErrLog("更新用户发布的视频数量时RowsAffected为0：", err.Error())
 		return false
 	}
 	return true

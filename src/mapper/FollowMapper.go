@@ -44,7 +44,7 @@ func OperationFollow(opType int8, follower, followee int64, tx *sqlx.Tx) bool {
 // ExistFollow 判断是否存在关注记录
 func ExistFollow(follower, followee int64) bool {
 	var count int32
-	err := Db.Get(&count, "select count(*) from follow where follower = ? and followee = ? and deleted = 0", follower, followee)
+	err := common.Db.Get(&count, "select count(*) from follow where follower = ? and followee = ? and deleted = 0", follower, followee)
 	if err != nil {
 		common.ErrLog("判断是否存在关注记录失败：", err.Error())
 		return false
@@ -56,7 +56,7 @@ func ExistFollow(follower, followee int64) bool {
 // 成功返回true
 func GetFolloweeIdsByFollowerId(followerId int64) (bool, []int64) {
 	var ids []int64
-	err := Db.Select(&ids, "select followee from follow where follower = ? and deleted = 0", followerId)
+	err := common.Db.Select(&ids, "select followee from follow where follower = ? and deleted = 0", followerId)
 	if err != nil {
 		common.ErrLog("GetFolloweeListByFollowerId时出错：", ids)
 		return false, nil
@@ -68,7 +68,7 @@ func GetFolloweeIdsByFollowerId(followerId int64) (bool, []int64) {
 // 成功返回true
 func GetFollowerIdsByFolloweeId(followeeId int64) (bool, []int64) {
 	var ids []int64
-	err := Db.Select(&ids, "select follower from follow where followee = ? and deleted = 0", followeeId)
+	err := common.Db.Select(&ids, "select follower from follow where followee = ? and deleted = 0", followeeId)
 	if err != nil {
 		common.ErrLog("GetFollowerIdsByFollowee时出错：", ids)
 		return false, nil

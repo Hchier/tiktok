@@ -47,7 +47,7 @@ func OperateVideoComment(opType int8, videoId int64, content string, userId int6
 // GetVideoCommentByVideoId 根据videoId查评论
 func GetVideoCommentByVideoId(videoId int64) (bool, []VideoComment) {
 	var videoCommentList []VideoComment
-	err := Db.Select(&videoCommentList, "select * from video_comment where video_id = ? and deleted = 0", videoId)
+	err := common.Db.Select(&videoCommentList, "select * from video_comment where video_id = ? and deleted = 0", videoId)
 	if err != nil {
 		common.ErrLog("根据videoId查评论失败：", videoCommentList)
 		return false, nil

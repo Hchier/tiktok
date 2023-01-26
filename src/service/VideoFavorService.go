@@ -12,7 +12,7 @@ import (
 // 4件事
 // 1, 插入视频点赞信息  2, 更新视频获赞数  3, 更新作者的获赞数 4, 更新用户的点赞数
 func DoFavorVideo(userId, videoId, authorId int64) *common.VideoFavorResp {
-	tx, err := mapper.Db.Beginx()
+	tx, err := common.Db.Beginx()
 	if err != nil {
 		common.ErrLog("视频点赞时事务开启失败：", err.Error())
 		return &common.VideoFavorResp{
@@ -88,7 +88,7 @@ func DoFavorVideo(userId, videoId, authorId int64) *common.VideoFavorResp {
 // 4件事
 // 1, 删除视频点赞信息  2, 更新视频获赞数  3, 更新作者的获赞数 4, 更新用户的点赞数
 func DoUnFavorVideo(userId, videoId, authorId int64) *common.VideoFavorResp {
-	tx, err := mapper.Db.Beginx()
+	tx, err := common.Db.Beginx()
 	if err != nil {
 		common.ErrLog("视频取消点赞时事务开启失败：", err.Error())
 		return &common.VideoFavorResp{

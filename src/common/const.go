@@ -1,19 +1,46 @@
 package common
 
+import (
+	"bufio"
+	"log"
+	"os"
+	"strconv"
+	"strings"
+)
+
 //@author by Hchier
 //@Date 2023/1/25 10:10
 
-// 以下5个const在部署时要更改
-const RedisAddr = "127.0.0.1:6379" //
-const RedisPassword = ""           //
-const ErrLogDest = "E:\\hchier\\GoProjects\\tiktok\\logs/err.log"
-const StaticResourcePrefix = "E:\\static\\tiktok\\"
-const StaticResources = "http://192.168.0.105:8010/tiktok/"
+//const RedisAddr = "127.0.0.1:6379" //
+//const RedisPassword = ""           //
+//const ErrLogDest = "E:\\hchier\\GoProjects\\tiktok\\logs/err.log"
+//const StaticResourcePrefix = "E:\\static\\tiktok\\"
+//const StaticResources = "http://192.168.0.105:8010/tiktok/"
+//const DataSourceName = "root:pyh903903@tcp(127.0.0.1:3306)/tiktok?charset=utf8mb4&parseTime=True&loc=Local"
+//
+//const DriverName = "mysql"
+//const TokenValidity = 30      //token有效期（分钟）
+//const CheckTokenDuration = 10 //定期检查token是否有效（分钟）
+//const AvatarDest = "avatar\\"
+//const BackgroundImageDest = "bg\\"
+//const VideoDataDest = "video\\data\\"
+//const VideoCoverDest = "video\\cover\\"
 
-const AvatarDest = "avatar\\"
-const BackgroundImageDest = "bg\\"
-const VideoDataDest = "video\\data\\"
-const VideoCoverDest = "video\\cover\\"
+var (
+	RedisAddr            = ""
+	RedisPassword        = ""
+	ErrLogDest           = ""
+	StaticResourcePrefix = ""
+	StaticResources      = ""
+	DataSourceName       = ""
+	DriverName           = ""
+	TokenValidity        = int64(0)
+	CheckTokenDuration   = int64(0)
+	AvatarDest           = ""
+	BackgroundImageDest  = ""
+	VideoDataDest        = ""
+	VideoCoverDest       = ""
+)
 
 var Signatures = [...]string{
 	"雄关漫道真如铁，而今迈步从头越。",
@@ -26,4 +53,35 @@ var Signatures = [...]string{
 	"为有牺牲多壮志，敢教日月换新天。",
 	"四海翻腾云水怒，五洲震荡风雷激。",
 	"世上无难事，只要肯登攀。",
+}
+
+func LoadConfig(path string) {
+	file, err := os.Open(path)
+	if err != nil {
+		log.Fatal(err)
+		return
+	}
+	defer file.Close()
+
+	var configs map[string]string = make(map[string]string)
+	scanner := bufio.NewScanner(file)
+	for scanner.Scan() {
+		line := scanner.Text()
+		splits := strings.SplitN(line, "=", 2)
+		configs[splits[0]] = splits[1]
+	}
+
+	RedisAddr = configs["RedisAddr"]
+	RedisPassword = configs["RedisPassword"]
+	ErrLogDest = configs["ErrLogDest"]
+	StaticResourcePrefix = configs["StaticResourcePrefix"]
+	StaticResources = configs["StaticResources"]
+	DataSourceName = configs["DataSourceName"]
+	DriverName = configs["DriverName"]
+	TokenValidity, _ = strconv.ParseInt(configs["TokenValidity"], 10, 64)
+	CheckTokenDuration, _ = strconv.ParseInt(configs["CheckTokenDuration"], 10, 64)
+	AvatarDest = configs["AvatarDest"]
+	BackgroundImageDest = configs["BackgroundImageDest"]
+	VideoDataDest = configs["VideoDataDest"]
+	VideoCoverDest = configs["VideoCoverDest"]
 }
