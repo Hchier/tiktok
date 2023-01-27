@@ -1,14 +1,11 @@
 package common
 
 import (
-	"bytes"
 	"context"
 	"crypto/md5"
 	"encoding/hex"
 	"fmt"
 	"github.com/cloudwego/hertz/pkg/app"
-	"github.com/disintegration/imaging"
-	ffmpeg "github.com/u2takey/ffmpeg-go"
 	"math/rand"
 	"os"
 	"strconv"
@@ -37,29 +34,6 @@ func IsValidUser(ctx context.Context, c *app.RequestContext) {
 		return
 	}
 	c.Set("id", userId)
-}
-
-// CaptureVideoFrameAsPic 截取视频帧作为图片保存
-// 成功返回true
-func CaptureVideoFrameAsPic(videoPath string, frameNum int16, picHeight int, picWidth int, picPath string) bool {
-	buf := bytes.NewBuffer(nil)
-	err := ffmpeg.Input(videoPath).
-		Filter("select", ffmpeg.Args{fmt.Sprintf("gte(n,%d)", frameNum)}).
-		Output("pipe:", ffmpeg.KwArgs{"vframes": 1, "format": "image2", "vcodec": "png"}).
-		WithOutput(buf, os.Stdout).
-		Run()
-	if err != nil {
-		ErrLog("截图失败：", err.Error())
-		return false
-	}
-	img, err := imaging.Decode(buf)
-
-	err = imaging.Save(imaging.Resize(img, picWidth, picHeight, imaging.Lanczos), picPath)
-	if err != nil {
-		ErrLog("图片落盘失败：", err.Error())
-		return false
-	}
-	return true
 }
 
 // TimeTask 定时任务

@@ -14,12 +14,14 @@ func PublishVideo(c *app.RequestContext, userId int64) *common.VideoPublishResp 
 	videoData, _ := c.FormFile("data")
 	videoData.Filename = common.GetSnowId() + ".mp4"
 	playUrl := common.VideoDataPathPrefix + videoData.Filename
+
 	videoAbsPath := common.StaticResourcePathPrefix + playUrl
+	videoTempAbsPath := common.StaticResourcePathPrefix + common.VideoDataTempPathPrefix + videoData.Filename
 	videoTitle := string(c.FormValue("title"))
 	coverUrl := common.VideoCoverPathPrefix + common.GetSnowId() + ".png"
 	coverAbsUrl := common.StaticResourcePathPrefix + coverUrl
 
-	err := c.SaveUploadedFile(videoData, common.StaticResourcePathPrefix+playUrl)
+	err := c.SaveUploadedFile(videoData, videoTempAbsPath)
 	if err != nil {
 		common.ErrLog("视频落盘出错：", err.Error())
 		return &common.VideoPublishResp{
@@ -28,7 +30,14 @@ func PublishVideo(c *app.RequestContext, userId int64) *common.VideoPublishResp 
 		}
 	}
 
-	if !common.CaptureVideoFrameAsPic(videoAbsPath, 1, 480, 270, coverAbsUrl) {
+	if !common.CaptureVideoFrameAsPic(videoTempAbsPath, 1, int(common.PicHeight), int(common.PicWidth), coverAbsUrl) {
+		return &common.VideoPublishResp{
+			StatusCode: -1,
+			StatusMsg:  "发布失败",
+		}
+	}
+
+	if !common.CompressVideo(videoTempAbsPath, common.FrameRate, common.VideoHeight, common.VideoWidth, videoAbsPath) {
 		return &common.VideoPublishResp{
 			StatusCode: -1,
 			StatusMsg:  "发布失败",

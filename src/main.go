@@ -21,6 +21,7 @@ func Preparation() {
 		common.StaticResourcePathPrefix+common.AvatarPathPrefix,
 		common.StaticResourcePathPrefix+common.BackgroundImagePathPrefix,
 		common.StaticResourcePathPrefix+common.VideoDataPathPrefix,
+		common.StaticResourcePathPrefix+common.VideoDataTempPathPrefix,
 		common.StaticResourcePathPrefix+common.VideoCoverPathPrefix,
 	)
 

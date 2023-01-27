@@ -40,7 +40,13 @@ var (
 	AvatarPathPrefix          = ""
 	BackgroundImagePathPrefix = ""
 	VideoDataPathPrefix       = ""
+	VideoDataTempPathPrefix   = ""
 	VideoCoverPathPrefix      = ""
+	FrameRate                 = int64(0)
+	VideoHeight               = int64(0)
+	VideoWidth                = int64(0)
+	PicHeight                 = int64(0)
+	PicWidth                  = int64(0)
 )
 
 var Signatures = [...]string{
@@ -88,5 +94,11 @@ func LoadConfig(path string) {
 	AvatarPathPrefix = configs["AvatarPathPrefix"]
 	BackgroundImagePathPrefix = configs["BackgroundImagePathPrefix"]
 	VideoDataPathPrefix = configs["VideoDataPathPrefix"]
+	VideoDataTempPathPrefix = configs["VideoDataTempPathPrefix"]
 	VideoCoverPathPrefix = configs["VideoCoverPathPrefix"]
+	FrameRate, _ = strconv.ParseInt(configs["FrameRate"], 10, 64)
+	VideoHeight, _ = strconv.ParseInt(configs["VideoHeight"], 10, 64)
+	VideoWidth, _ = strconv.ParseInt(configs["VideoWidth"], 10, 64)
+	PicHeight, _ = strconv.ParseInt(configs["PicHeight"], 10, 64)
+	PicWidth, _ = strconv.ParseInt(configs["PicWidth"], 10, 64)
 }
