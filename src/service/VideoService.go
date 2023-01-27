@@ -13,13 +13,13 @@ import (
 func PublishVideo(c *app.RequestContext, userId int64) *common.VideoPublishResp {
 	videoData, _ := c.FormFile("data")
 	videoData.Filename = common.GetSnowId() + ".mp4"
-	playUrl := common.VideoDataDest + videoData.Filename
-	videoAbsPath := common.StaticResourcePrefix + playUrl
+	playUrl := common.VideoDataPathPrefix + videoData.Filename
+	videoAbsPath := common.StaticResourcePathPrefix + playUrl
 	videoTitle := string(c.FormValue("title"))
-	coverUrl := common.VideoCoverDest + common.GetSnowId() + ".png"
-	coverAbsUrl := common.StaticResourcePrefix + coverUrl
+	coverUrl := common.VideoCoverPathPrefix + common.GetSnowId() + ".png"
+	coverAbsUrl := common.StaticResourcePathPrefix + coverUrl
 
-	err := c.SaveUploadedFile(videoData, common.StaticResourcePrefix+playUrl)
+	err := c.SaveUploadedFile(videoData, common.StaticResourcePathPrefix+playUrl)
 	if err != nil {
 		common.ErrLog("视频落盘出错：", err.Error())
 		return &common.VideoPublishResp{
@@ -86,8 +86,8 @@ func TransferVideoEntityToVideoVo(videos []mapper.Video, currentUserId int64) []
 		videoVos[i].Author.Name = user.Username
 		videoVos[i].Author.FollowCount = user.Follow_count
 		videoVos[i].Author.FollowerCount = user.Follower_count
-		videoVos[i].Author.Avatar = common.StaticResources + user.Avatar
-		videoVos[i].Author.BackgroundImage = common.StaticResources + user.Background_image
+		videoVos[i].Author.Avatar = common.StaticResourceUrlPrefix + user.Avatar
+		videoVos[i].Author.BackgroundImage = common.StaticResourceUrlPrefix + user.Background_image
 		videoVos[i].Author.Signature = user.Signature
 		videoVos[i].Author.TotalFavorited = user.Total_favorited
 		videoVos[i].Author.FavoriteCount = user.Favorite_count
@@ -95,8 +95,8 @@ func TransferVideoEntityToVideoVo(videos []mapper.Video, currentUserId int64) []
 		videoVos[i].Author.IsFollow = mapper.ExistFollow(currentUserId, videoVos[i].Author.Id)
 
 		videoVos[i].Id = video.Id
-		videoVos[i].PlayUrl = common.StaticResources + video.Play_url
-		videoVos[i].CoverUrl = common.StaticResources + video.Cover_url
+		videoVos[i].PlayUrl = common.StaticResourceUrlPrefix + video.Play_url
+		videoVos[i].CoverUrl = common.StaticResourceUrlPrefix + video.Cover_url
 		videoVos[i].FavoriteCount = video.Favorite_count
 		videoVos[i].CommentCount = video.Comment_count
 		videoVos[i].IsFavorite = mapper.ExistVideoFavor(currentUserId, video.Id)

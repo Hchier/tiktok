@@ -117,7 +117,7 @@ func GetFolloweeInfo(currentUserId, targetUserId int64) *common.FollowListResp {
 		user := mapper.SelectUserById(id)
 		resp.UserList[i].Id = id
 		resp.UserList[i].Name = user.Username
-		resp.UserList[i].Avatar = common.StaticResources + user.Avatar
+		resp.UserList[i].Avatar = common.StaticResourceUrlPrefix + user.Avatar
 		resp.UserList[i].IsFollow = mapper.ExistFollow(currentUserId, resp.UserList[i].Id)
 	}
 	return resp
@@ -135,7 +135,7 @@ func GetFollowerInfo(currentUserId, targetUserId int64) *common.FollowListResp {
 		user := mapper.SelectUserById(id)
 		resp.UserList[i].Id = id
 		resp.UserList[i].Name = user.Username
-		resp.UserList[i].Avatar = common.StaticResources + user.Avatar
+		resp.UserList[i].Avatar = common.StaticResourceUrlPrefix + user.Avatar
 		resp.UserList[i].IsFollow = mapper.ExistFollow(currentUserId, resp.UserList[i].Id)
 	}
 	return resp

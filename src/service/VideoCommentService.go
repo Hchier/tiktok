@@ -65,7 +65,7 @@ func DoPublishVideoComment(videoId int64, content string, userId int64, commentI
 			}{
 				Id:       user.Id,
 				Name:     user.Username,
-				Avatar:   common.StaticResources + user.Avatar,
+				Avatar:   common.StaticResourceUrlPrefix + user.Avatar,
 				IsFollow: true,
 			},
 			Content:    content,
@@ -140,7 +140,7 @@ func GetVideoCommentByVideoId(videoId int64) *common.VideoCommentListResp {
 		var user mapper.User = mapper.SelectUserById(comment.User_id)
 		resp.CommentList[i].User.Id = user.Id
 		resp.CommentList[i].User.Name = user.Username
-		resp.CommentList[i].User.Avatar = common.StaticResources + user.Avatar
+		resp.CommentList[i].User.Avatar = common.StaticResourceUrlPrefix + user.Avatar
 		resp.CommentList[i].User.FollowCount = user.Follow_count
 		resp.CommentList[i].User.FollowerCount = user.Follower_count
 		resp.CommentList[i].User.IsFollow = true

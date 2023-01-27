@@ -13,33 +13,34 @@ import (
 
 //const RedisAddr = "127.0.0.1:6379" //
 //const RedisPassword = ""           //
-//const ErrLogDest = "E:\\hchier\\GoProjects\\tiktok\\logs/err.log"
-//const StaticResourcePrefix = "E:\\static\\tiktok\\"
-//const StaticResources = "http://192.168.0.105:8010/tiktok/"
+//const ErrLogPath = "E:\\hchier\\GoProjects\\tiktok\\logs/err.log"
+//const StaticResourcePathPrefix = "E:\\static\\tiktok\\"
+//const StaticResourceUrlPrefix = "http://192.168.0.105:8010/tiktok/"
 //const DataSourceName = "root:pyh903903@tcp(127.0.0.1:3306)/tiktok?charset=utf8mb4&parseTime=True&loc=Local"
 //
 //const DriverName = "mysql"
 //const TokenValidity = 30      //token有效期（分钟）
 //const CheckTokenDuration = 10 //定期检查token是否有效（分钟）
-//const AvatarDest = "avatar\\"
-//const BackgroundImageDest = "bg\\"
-//const VideoDataDest = "video\\data\\"
-//const VideoCoverDest = "video\\cover\\"
+//const AvatarPathPrefix = "avatar\\"
+//const BackgroundImagePathPrefix = "bg\\"
+//const VideoDataPathPrefix = "video\\data\\"
+//const VideoCoverPathPrefix = "video\\cover\\"
 
 var (
-	RedisAddr            = ""
-	RedisPassword        = ""
-	ErrLogDest           = ""
-	StaticResourcePrefix = ""
-	StaticResources      = ""
-	DataSourceName       = ""
-	DriverName           = ""
-	TokenValidity        = int64(0)
-	CheckTokenDuration   = int64(0)
-	AvatarDest           = ""
-	BackgroundImageDest  = ""
-	VideoDataDest        = ""
-	VideoCoverDest       = ""
+	HostPorts                 = ""
+	RedisAddr                 = ""
+	RedisPassword             = ""
+	ErrLogPath                = ""
+	StaticResourcePathPrefix  = ""
+	StaticResourceUrlPrefix   = ""
+	DataSourceName            = ""
+	DriverName                = ""
+	TokenValidity             = int64(0)
+	CheckTokenDuration        = int64(0)
+	AvatarPathPrefix          = ""
+	BackgroundImagePathPrefix = ""
+	VideoDataPathPrefix       = ""
+	VideoCoverPathPrefix      = ""
 )
 
 var Signatures = [...]string{
@@ -67,21 +68,25 @@ func LoadConfig(path string) {
 	scanner := bufio.NewScanner(file)
 	for scanner.Scan() {
 		line := scanner.Text()
+		if len(line) == 0 || line[0] == '#' {
+			continue
+		}
 		splits := strings.SplitN(line, "=", 2)
 		configs[splits[0]] = splits[1]
 	}
 
+	HostPorts = configs["HostPorts"]
 	RedisAddr = configs["RedisAddr"]
 	RedisPassword = configs["RedisPassword"]
-	ErrLogDest = configs["ErrLogDest"]
-	StaticResourcePrefix = configs["StaticResourcePrefix"]
-	StaticResources = configs["StaticResources"]
+	ErrLogPath = configs["ErrLogPath"]
+	StaticResourcePathPrefix = configs["StaticResourcePathPrefix"]
+	StaticResourceUrlPrefix = configs["StaticResourceUrlPrefix"]
 	DataSourceName = configs["DataSourceName"]
 	DriverName = configs["DriverName"]
 	TokenValidity, _ = strconv.ParseInt(configs["TokenValidity"], 10, 64)
 	CheckTokenDuration, _ = strconv.ParseInt(configs["CheckTokenDuration"], 10, 64)
-	AvatarDest = configs["AvatarDest"]
-	BackgroundImageDest = configs["BackgroundImageDest"]
-	VideoDataDest = configs["VideoDataDest"]
-	VideoCoverDest = configs["VideoCoverDest"]
+	AvatarPathPrefix = configs["AvatarPathPrefix"]
+	BackgroundImagePathPrefix = configs["BackgroundImagePathPrefix"]
+	VideoDataPathPrefix = configs["VideoDataPathPrefix"]
+	VideoCoverPathPrefix = configs["VideoCoverPathPrefix"]
 }

@@ -25,5 +25,5 @@ func Log(dest string, v ...interface{}) {
 
 // ErrLog 打印错误日志
 func ErrLog(v ...interface{}) {
-	Log(ErrLogDest, v)
+	Log(ErrLogPath, v)
 }

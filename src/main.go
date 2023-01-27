@@ -18,10 +18,10 @@ func Preparation() {
 	common.DelKeys("tokens", "expireTime")
 	//ErrLogDest不用创建，不存在时会自动创建
 	common.MakeDirs(
-		common.StaticResourcePrefix+common.AvatarDest,
-		common.StaticResourcePrefix+common.BackgroundImageDest,
-		common.StaticResourcePrefix+common.VideoDataDest,
-		common.StaticResourcePrefix+common.VideoCoverDest,
+		common.StaticResourcePathPrefix+common.AvatarPathPrefix,
+		common.StaticResourcePathPrefix+common.BackgroundImagePathPrefix,
+		common.StaticResourcePathPrefix+common.VideoDataPathPrefix,
+		common.StaticResourcePathPrefix+common.VideoCoverPathPrefix,
 	)
 
 }
